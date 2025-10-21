@@ -1,19 +1,28 @@
 import './App.css';
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
 
+  const [listOfRecords, setListOfRecords] = useState([]);
+
   useEffect(() => {
     axios.get("http://localhost:3001/records").then((response) => {
-      console.log(response);
+      setListOfRecords(response.data);
     })
   }, []);
 
   return (
-    <div className="App">
-      
-      
+    <div className="App"> {listOfRecords.map((value, key) => {
+      return <div>
+
+        <div> {value.title} </div>
+        <div> {value.artist} </div>
+        <div> {value.year} </div>
+        <div> {value.genre} </div>
+
+      </div>
+    })}
     </div>
   );
 }

@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        artist: {
+        year: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
