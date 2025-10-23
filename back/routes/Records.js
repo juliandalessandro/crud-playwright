@@ -7,4 +7,15 @@ router.get("/", async (req, res) => {
     res.json(listOfRecords);
 });
 
+router.post('/', async (req, res) => {
+  try {
+    const record = await records.create(req.body);
+    res.status(201).json(record);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 module.exports = router;
