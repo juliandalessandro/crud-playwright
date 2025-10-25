@@ -23,7 +23,7 @@ function UploadRecord() {
         axios.post("http://localhost:3001/records", record)
             .then(() => {
             setMessage("✅ Registro creado con éxito!");
-            setRecord({ title: "", artist: "", year: "", genre: "" });
+            setRecord({ title: "", artist: "", year: "", genre: "", cover: "" });
             })
             .catch((err) => {
             console.error(err);
@@ -33,50 +33,67 @@ function UploadRecord() {
 
 
     return (
+        <div className="form-container">
+            <h2>Upload Record</h2>
 
-        <div>
-        <h2>Upload Record</h2>
-
-        <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}>
             <input
-                type="text" 
-                name="title" 
-                placeholder="Title" 
-                value={record.title} 
+                className="form-input"
+                type="text"
+                name="title"
+                placeholder="Title"
+                value={record.title}
                 onChange={handleChange}
                 required
             />
             <input
-                type="text" 
-                name="artist" 
-                placeholder="Artist" 
-                value={record.artist} 
+                className="form-input"
+                type="text"
+                name="artist"
+                placeholder="Artist"
+                value={record.artist}
                 onChange={handleChange}
                 required
             />
             <input
-                type="number" 
-                name="year" 
-                placeholder="Year" 
-                value={record.year} 
+                className="form-input"
+                type="number"
+                name="year"
+                placeholder="Year"
+                value={record.year}
                 onChange={handleChange}
                 required
             />
             <input
-                type="text" 
-                name="genre" 
-                placeholder="Genre" 
-                value={record.genre} 
+                className="form-input"
+                type="text"
+                name="genre"
+                placeholder="Genre"
+                value={record.genre}
+                onChange={handleChange}
+                required
+            />
+            <input
+                className="form-input"
+                type="text"
+                name="cover"
+                placeholder="Cover"
+                value={record.cover}
                 onChange={handleChange}
                 required
             />
 
-            <button type="submit">Upload</button>
-        </form>
+            <button className="btn-upload" type="submit">Upload</button>
+            </form>
 
-        <p>{message}</p>
-    </div>
-  )
+            {message && (
+            <p className={message.includes("✅") ? "message-success" : "message-error"}>
+                {message}
+            </p>
+            )}
+        </div>
+    );
+
 }
 
 export default UploadRecord;
