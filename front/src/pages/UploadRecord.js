@@ -29,7 +29,11 @@ function UploadRecord() {
       setRecord({ title: "", artist: "", year: "", genre: "", cover: "" });
 
       // Redirigir al home y pasar mensaje como estado
-      navigate("/", { state: { toastMessage: "Record uploaded successfully" } });
+      // 'replace: true' evita que el toast reaparezca al refrescar la página
+      navigate("/", { 
+        state: { toastMessage: "Record uploaded successfully" }, 
+        replace: true 
+      });
 
     } catch (err) {
       console.error(err);

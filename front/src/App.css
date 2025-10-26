@@ -384,6 +384,12 @@ body.modal-open {
   transform: translateY(-2px);
 }
 
+.btn-upload:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .message-success {
   margin-top: 1rem;
   color: #9ccc65;

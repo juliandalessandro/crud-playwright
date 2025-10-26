@@ -95,6 +95,19 @@ function ListOfRecords() {
     document.body.classList.add("modal-open");
   };
 
+  const isEditChanged = () => {
+    if (!recordToEdit) return false;
+
+    return Object.keys(recordToEdit).some((key) => {
+      const original = recordToEdit[key];
+      const current = editRecord[key];
+
+      // Convertir a string para comparar
+      return String(original) !== String(current);
+    });
+  };
+
+
   const handleCloseEdit = () => {
     setIsClosing(true);
     setTimeout(() => {
@@ -224,7 +237,7 @@ function ListOfRecords() {
                 required
               />
 
-              <button className="btn-upload" type="submit">Save</button>
+              <button className="btn-upload" type="submit" disabled={!isEditChanged()}>Save</button>
             </form>
           </div>
         </div>
