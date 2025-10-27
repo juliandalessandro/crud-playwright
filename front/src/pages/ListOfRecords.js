@@ -2,22 +2,21 @@ import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import '../App.css';
+import EditRecordModal from "../components/EditRecordModal";
 
 function ListOfRecords() {
   
-  const location = useLocation();
+  const location = useLocation(); //to get the toast message from UploadRecord to ListOfRecords page
+  const [listOfRecords, setListOfRecords] = useState([]); //List of records from records table
+  const [isClosing, setIsClosing] = useState(false); //For modal closing
+  
 
-  const [listOfRecords, setListOfRecords] = useState([]);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [recordToDelete, setRecordToDelete] = useState(null);
-  const [isClosing, setIsClosing] = useState(false);
-  const [deleteMessage, setDeleteMessage] = useState("");
-
-  // Search + debounce
+  // SEARCH + DEBOUNCE states
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  // Edit states
+
+  // EDIT states
   const [showEditModal, setShowEditModal] = useState(false);
   const [recordToEdit, setRecordToEdit] = useState(null);
   const [editRecord, setEditRecord] = useState({
@@ -29,10 +28,19 @@ function ListOfRecords() {
   });
   const [editMessage, setEditMessage] = useState("");
 
+
+  // DELETE states
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [recordToDelete, setRecordToDelete] = useState(null);
+  const [deleteMessage, setDeleteMessage] = useState("");
+
+
+  // UPLOAD states
   // Upload toast (comes from UploadRecord via location.state)
   const [uploadMessage, setUploadMessage] = useState("");
 
-  /* ------------------ fetch records ------------------ */
+
+  /* ------------------ FETCH records ------------------ */
   useEffect(() => {
     let mounted = true;
     axios.get("http://localhost:3001/records")
@@ -46,7 +54,8 @@ function ListOfRecords() {
     return () => { mounted = false; };
   }, []);
 
-  /* ------------- consume toast from navigation ------------- */
+  /* ----------------------- UPLOAD handlers----------------------- */
+  /* ------------- In order to not show the Record Upload toast message on F5------------- */
   useEffect(() => {
     if (location.state?.toastMessage) {
       setUploadMessage(location.state.toastMessage);
@@ -65,7 +74,19 @@ function ListOfRecords() {
     }
   }, [location.state]);
 
-  /* ------------------ debounce search ------------------ */
+
+  /* ----------------------- SEARCH handlers----------------------- */
+
+  /* ------------------ Filter List ------------------ */
+  const filteredRecords = useMemo(() => {
+    const q = (debouncedSearch || "").trim().toLowerCase();
+    if (!q) return listOfRecords;
+    return listOfRecords.filter(r =>
+      (r.title || "").toString().toLowerCase().includes(q)
+    );
+  }, [listOfRecords, debouncedSearch]);
+  
+  /* ------------------ Debounce for Search ------------------ */
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search);
@@ -74,16 +95,9 @@ function ListOfRecords() {
     return () => clearTimeout(handler);
   }, [search]);
 
-  /* ------------------ filtered list ------------------ */
-  const filteredRecords = useMemo(() => {
-    const q = (debouncedSearch || "").trim().toLowerCase();
-    if (!q) return listOfRecords;
-    return listOfRecords.filter(r =>
-      (r.title || "").toString().toLowerCase().includes(q)
-    );
-  }, [listOfRecords, debouncedSearch]);
-
-  /* ------------------ keyboard handling (Esc para cerrar modales) ------------------ */
+  
+  /* ----------------------- MODAL handlers----------------------- */
+  /* ------------------ Keyboard Handling (Esc to close modal) ------------------ */
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
@@ -94,13 +108,16 @@ function ListOfRecords() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []); // deps empty: attach once
+  
 
-  /* ------------------ DELETE handlers ------------------ */
+  /* ----------------------- DELETE handlers----------------------- */
+  /* ----------------------- Set record to delete ----------------------- */
   const handleDelete = (record) => {
     setRecordToDelete(record);
     setShowDeleteModal(true);
   };
 
+  /* ----------------------- Close Delete modal ----------------------- */
   const handleCloseDelete = () => {
     setIsClosing(true);
     setTimeout(() => {
@@ -110,6 +127,7 @@ function ListOfRecords() {
     }, 200); // match CSS fade duration
   };
 
+  /* ----------------------- Delete API ----------------------- */
   const handleConfirmDelete = async () => {
     if (!recordToDelete) return;
     try {
@@ -123,7 +141,8 @@ function ListOfRecords() {
     }
   };
 
-  /* ------------------ EDIT handlers ------------------ */
+  /* ----------------------- EDIT handlers ----------------------- */
+  /* ----------------------- Set record to Edit ----------------------- */
   const handleEdit = (record) => {
     setRecordToEdit(record);
     // ensure primitive normalization (strings) so comparison behaves
@@ -138,11 +157,13 @@ function ListOfRecords() {
     document.body.classList.add("modal-open");
   };
 
+  /* ----------------------- Set changes ----------------------- */
   const handleEditChange = (e) => {
     setEditRecord(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  // true si hay alguna diferencia real entre original y edit (normalizando a string)
+  /* ----------------------- Checking actual changes on record edit ----------------------- */
+  /* true si hay alguna diferencia real entre original y edit (normalizando a string) */
   const isEditChanged = () => {
     if (!recordToEdit) return false;
 
@@ -153,6 +174,7 @@ function ListOfRecords() {
     );
   };
 
+  /* ----------------------- Close Edit modal ----------------------- */
   const handleCloseEdit = () => {
     setIsClosing(true);
     setTimeout(() => {
@@ -164,6 +186,7 @@ function ListOfRecords() {
     }, 200);
   };
 
+  /* ----------------------- Edit API ----------------------- */
   const handleSubmitEdit = async (e) => {
     e.preventDefault();
     if (!recordToEdit) return;
@@ -187,7 +210,10 @@ function ListOfRecords() {
     }
   };
 
-  /* ------------------ render ------------------ */
+
+  
+  /* ----------------------- RENDER ----------------------- */
+
   return (
     <div className="records-container">
       {/* SEARCH FIELD */}
@@ -229,7 +255,8 @@ function ListOfRecords() {
         ))}
       </div>
 
-      {/* Delete Modal */}
+
+      {/* ----------------------- DELETE MODAL ----------------------- */}
       {showDeleteModal && (
         <div className={`modal-overlay ${isClosing ? 'closing' : ''}`} onClick={handleCloseDelete}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -244,67 +271,21 @@ function ListOfRecords() {
         </div>
       )}
 
-      {/* Edit Modal */}
-      {showEditModal && (
-        <div className={`modal-overlay ${isClosing ? 'closing' : ''}`} onClick={handleCloseEdit}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={handleCloseEdit}>×</button>
-            <h3>Edit Record</h3>
 
-            <form className="modal-form" onSubmit={handleSubmitEdit}>
-              <input
-                className="form-input"
-                type="text"
-                name="title"
-                placeholder="Title"
-                value={editRecord.title}
-                onChange={handleEditChange}
-                required
-              />
-              <input
-                className="form-input"
-                type="text"
-                name="artist"
-                placeholder="Artist"
-                value={editRecord.artist}
-                onChange={handleEditChange}
-                required
-              />
-              <input
-                className="form-input"
-                type="number"
-                name="year"
-                placeholder="Year"
-                value={editRecord.year}
-                onChange={handleEditChange}
-                required
-              />
-              <input
-                className="form-input"
-                type="text"
-                name="genre"
-                placeholder="Genre"
-                value={editRecord.genre}
-                onChange={handleEditChange}
-                required
-              />
-              <input
-                className="form-input"
-                type="text"
-                name="cover"
-                placeholder="Cover"
-                value={editRecord.cover}
-                onChange={handleEditChange}
-                required
-              />
+      {/* ----------------------- EDIT MODAL ----------------------- */}
+      {showEditModal && <EditRecordModal
+            show={showEditModal}
+            isClosing={isClosing}
+            record={editRecord}
+            onClose={handleCloseEdit}
+            onChange={handleEditChange}
+            onSubmit={handleSubmitEdit}
+            isChanged={isEditChanged}
+        />
+      }
 
-              <button className="btn-upload" type="submit" disabled={!isEditChanged()}>Save</button>
-            </form>
-          </div>
-        </div>
-      )}
 
-      {/* Toasts */}
+      {/* ----------------------- TOAST MESSAGES ----------------------- */}
       {editMessage && <div className="toast-message-edit-upload">{editMessage}</div>}
       {deleteMessage && <div className="toast-message">{deleteMessage}</div>}
       {uploadMessage && <div className="toast-message-edit-upload">{uploadMessage}</div>}
