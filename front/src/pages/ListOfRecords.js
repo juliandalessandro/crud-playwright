@@ -1,8 +1,13 @@
-import axios from "axios";
+//REACT imports
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
+//LIBRARIES imports
+import axios from "axios";
+//CSS import
 import '../App.css';
+//COMPONENTS imports
 import EditRecordModal from "../components/EditRecordModal";
+import DeleteRecordModal from "../components/DeleteRecordModal";
 
 function ListOfRecords() {
   
@@ -211,7 +216,7 @@ function ListOfRecords() {
   };
 
 
-  
+
   /* ----------------------- RENDER ----------------------- */
 
   return (
@@ -257,19 +262,14 @@ function ListOfRecords() {
 
 
       {/* ----------------------- DELETE MODAL ----------------------- */}
-      {showDeleteModal && (
-        <div className={`modal-overlay ${isClosing ? 'closing' : ''}`} onClick={handleCloseDelete}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={handleCloseDelete}>×</button>
-            <h3>Are you sure you want to delete this record?</h3>
-            <p>{recordToDelete?.title} – {recordToDelete?.artist}</p>
-            <div className="modal-buttons">
-              <button className="btn-cancel" onClick={handleCloseDelete}>Cancel</button>
-              <button className="btn-confirm-delete" onClick={handleConfirmDelete}>Delete</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {showDeleteModal && <DeleteRecordModal
+            show={showDeleteModal}
+            isClosing={isClosing}
+            record={recordToDelete}
+            onCancel={handleCloseDelete}
+            onConfirm={handleConfirmDelete}
+        />
+      }
 
 
       {/* ----------------------- EDIT MODAL ----------------------- */}
