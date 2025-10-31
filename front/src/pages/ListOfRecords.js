@@ -19,6 +19,10 @@ function ListOfRecords() {
   const [listOfRecords, setListOfRecords] = useState([]);
   const [isClosing, setIsClosing] = useState(false);
 
+  // FETCH status
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   // SEARCH + DEBOUNCE
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -47,27 +51,30 @@ function ListOfRecords() {
   useEffect(() => {
     let mounted = true;
 
-    getRecords()
-      .then((data) => {
-        if (!mounted) return;
-        setListOfRecords(data || []);
-      })
-      .catch((err) => console.error("Error fetching records:", err));
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
 
-    return () => {
-      mounted = false;
+      try {
+        const data = await getRecords();
+        if (mounted) setListOfRecords(data || []);
+      } catch (err) {
+        console.error("Error fetching records:", err);
+        if (mounted) setError("Failed to load records. Please try again.");
+      } finally {
+        if (mounted) setLoading(false);
+      }
     };
+
+    fetchData();
+    return () => { mounted = false };
   }, []);
 
   /* ------------------ HANDLE UPLOAD TOAST ------------------ */
   useEffect(() => {
     if (location.state?.toastMessage) {
       setUploadMessage(location.state.toastMessage);
-
-      try {
-        window.history.replaceState({}, document.title);
-      } catch {}
-
+      try { window.history.replaceState({}, document.title); } catch {}
       const timer = setTimeout(() => setUploadMessage(""), 2500);
       return () => clearTimeout(timer);
     }
@@ -162,9 +169,9 @@ function ListOfRecords() {
   const handleSubmitEdit = async (e) => {
     e.preventDefault();
     if (!recordToEdit) return;
+
     try {
       handleCloseEdit();
-
       await updateRecord(recordToEdit.id, editRecord);
 
       setListOfRecords((prev) =>
@@ -182,6 +189,32 @@ function ListOfRecords() {
     }
   };
 
+  /* ------------------ LOADING & ERROR ------------------ */
+  if (loading) {
+    return (
+      <div className="records-container">
+        <h2>List of Records</h2>
+        <div className="loading-overlay">
+          <div className="loading-spinner"></div>
+          <span className="loading-text">Loading records...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="records-container">
+        <h2>List of Records</h2>
+        <p className="error-message">{error}</p>
+        <button className="btn-retry" onClick={() => window.location.reload()}>
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+
   /* ------------------ RENDER ------------------ */
   return (
     <div className="records-container">
@@ -189,12 +222,26 @@ function ListOfRecords() {
 
       <h2>List of Records</h2>
 
-      <div className="records-grid">
-        {filteredRecords.map((record) => (
-          <RecordCard key={record.id} record={record} onEdit={handleEdit} onDelete={handleDelete} />
-        ))}
-      </div>
+      {filteredRecords.length === 0 ? (
+        <p className="no-records">
+          {listOfRecords.length === 0
+            ? "No records stored yet."
+            : "No results found for your search."}
+        </p>
+      ) : (
+        <div className="records-grid">
+          {filteredRecords.map((record) => (
+            <RecordCard
+              key={record.id}
+              record={record}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
+      )}
 
+      {/* Modals */}
       {showDeleteModal && (
         <DeleteRecordModal
           show={showDeleteModal}
@@ -217,6 +264,7 @@ function ListOfRecords() {
         />
       )}
 
+      {/* Toasts */}
       {editMessage && <div className="toast-message-edit-upload">{editMessage}</div>}
       {deleteMessage && <div className="toast-message">{deleteMessage}</div>}
       {uploadMessage && <div className="toast-message-edit-upload">{uploadMessage}</div>}

@@ -156,6 +156,83 @@ body.modal-open {
   transform: scale(1.12);
 }
 
+/* ========= LOADING & ERROR STATES ========= */
+
+.error-message {
+  color: #d9534f;
+  background: #ffe6e6;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin: 12px 0;
+  font-weight: 600;
+  border: 1px solid #c44;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.error-message::before {
+  content: "⚠️";
+}
+
+.loading-spinner {
+  width: 22px;
+  height: 22px;
+  border: 3px solid #bbb;
+  border-top-color: #222;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 10px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* overlay loading para la grilla */
+.loading-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  font-size: 1.1rem;
+  color: #333;
+  font-weight: 600;
+  gap: 10px;
+}
+
+/* el texto dentro del overlay no gira */
+.loading-text {
+  display: inline-block;
+}
+
+/* botón en estado loading */
+.btn-loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* botón Retry */
+.btn-retry {
+  padding: 1rem;
+  background-color: #e0e0e0;
+  color: #111;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-retry:hover {
+  background-color: #d1d1d1;
+  transform: translateY(-2px);
+}
+
 /* ========= MODAL ========= */
 .modal-form {
   display: flex;
@@ -186,7 +263,7 @@ body.modal-open {
   padding: 24px 22px;
   border-radius: 16px;
   width: 100%;
-  max-width: 450px; /* igual que el form UploadRecord */
+  max-width: 450px;
   text-align: center;
   position: relative;
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);
@@ -272,8 +349,6 @@ body.modal-open {
 }
 
 /* ========= TOAST MESSAGES ========= */
-
-/* Delete toast (rojo) */
 .toast-message {
   position: fixed;
   bottom: 30px;
@@ -290,7 +365,6 @@ body.modal-open {
   z-index: 9999;
 }
 
-/* Edit toast (azul) */
 .toast-message-edit-upload {
   position: fixed;
   bottom: 30px;
@@ -307,7 +381,6 @@ body.modal-open {
   z-index: 9999;
 }
 
-/* Animaciones compartidas */
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -397,9 +470,20 @@ body.modal-open {
 }
 
 .message-error {
-  margin-top: 1rem;
-  color: #ef9a9a;
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: #ffe6e6;
+  color: #c75b5b;
+  border: 1px solid #c44;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.message-error::before {
+  content: "⚠️";
 }
 
 /* ========= RESPONSIVE ========= */
@@ -421,7 +505,8 @@ body.modal-open {
     margin-top: 3rem;
     padding: 2.5rem;
   }
-  .btn-upload {
+  .btn-upload,
+  .btn-retry {
     max-width: 300px;
     margin: 0 auto;
   }
