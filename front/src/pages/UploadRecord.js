@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { createRecord } from "../services/recordsApi"; 
 import "../App.css";
 // COMPONENTS imports
+import Navbar from "../components/Navbar";
 import Toast from "../components/Toast";
+
 
 function UploadRecord() {
 
@@ -48,22 +50,27 @@ function UploadRecord() {
   };
 
   return (
-    <div className="form-container">
-      <h2>Upload Record</h2>
+    <div>
 
-      <Toast message={error} type="error" />
+      <Navbar />
+      
+      <div className="form-container">
+        <h2>Upload Record</h2>
 
-      <form onSubmit={handleSubmit}>
-        <input className="form-input" type="text" name="title" placeholder="Title" value={record.title} onChange={handleChange} required />
-        <input className="form-input" type="text" name="artist" placeholder="Artist" value={record.artist} onChange={handleChange} required />
-        <input className="form-input" type="number" name="year" placeholder="Year" value={record.year} onChange={handleChange} required />
-        <input className="form-input" type="text" name="genre" placeholder="Genre" value={record.genre} onChange={handleChange} required />
-        <input className="form-input" type="text" name="cover" placeholder="Cover URL" value={record.cover} onChange={handleChange} required />
+        <Toast message={error} type="error" />
 
-        <button className="btn-upload" type="submit" disabled={loading}>
-          {loading ? "Uploading..." : "Upload"}
-        </button>
-      </form>
+        <form onSubmit={handleSubmit}>
+          <input className="form-input" type="text" name="title" placeholder="Title" value={record.title} onChange={handleChange} required />
+          <input className="form-input" type="text" name="artist" placeholder="Artist" value={record.artist} onChange={handleChange} required />
+          <input className="form-input" type="number" name="year" placeholder="Year" value={record.year} onChange={handleChange} required />
+          <input className="form-input" type="text" name="genre" placeholder="Genre" value={record.genre} onChange={handleChange} required />
+          <input className="form-input" type="text" name="cover" placeholder="Cover URL" value={record.cover} onChange={handleChange} required />
+
+          <button className="btn-submit" type="submit" disabled={loading}>
+            {loading ? "Uploading..." : "Upload"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

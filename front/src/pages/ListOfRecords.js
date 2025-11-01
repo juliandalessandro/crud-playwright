@@ -9,6 +9,7 @@ import { getRecords, deleteRecord, updateRecord } from "../services/recordsApi";
 import "../App.css";
 
 // COMPONENTS imports
+import Navbar from "../components/Navbar";
 import EditRecordModal from "../components/EditRecordModal";
 import DeleteRecordModal from "../components/DeleteRecordModal";
 import SearchRecordField from "../components/SearchRecordField";
@@ -219,57 +220,61 @@ function ListOfRecords() {
 
   /* ------------------ RENDER ------------------ */
   return (
-    <div className="records-container">
-      <SearchRecordField search={search} setSearch={setSearch} />
+    <div>
+      <Navbar />
+      <div className="records-container">
+        
+        <SearchRecordField search={search} setSearch={setSearch} />
 
-      <h2>List of Records</h2>
+        <h2>List of Records</h2>
 
-      {filteredRecords.length === 0 ? (
-        <p className="no-records">
-          {listOfRecords.length === 0
-            ? "No records stored yet."
-            : "No results found for your search."}
-        </p>
-      ) : (
-        <div className="records-grid">
-          {filteredRecords.map((record) => (
-            <RecordCard
-              key={record.id}
-              record={record}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          ))}
-        </div>
-      )}
+        {filteredRecords.length === 0 ? (
+          <p className="no-records">
+            {listOfRecords.length === 0
+              ? "No records stored yet."
+              : "No results found for your search."}
+          </p>
+        ) : (
+          <div className="records-grid">
+            {filteredRecords.map((record) => (
+              <RecordCard
+                key={record.id}
+                record={record}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
+        )}
 
-      {/* Modals */}
-      {showDeleteModal && (
-        <DeleteRecordModal
-          show={showDeleteModal}
-          isClosing={isClosing}
-          record={recordToDelete}
-          onCancel={handleCloseDelete}
-          onConfirm={handleConfirmDelete}
-        />
-      )}
+        {/* Modals */}
+        {showDeleteModal && (
+          <DeleteRecordModal
+            show={showDeleteModal}
+            isClosing={isClosing}
+            record={recordToDelete}
+            onCancel={handleCloseDelete}
+            onConfirm={handleConfirmDelete}
+          />
+        )}
 
-      {showEditModal && (
-        <EditRecordModal
-          show={showEditModal}
-          isClosing={isClosing}
-          record={editRecord}
-          onClose={handleCloseEdit}
-          onChange={handleEditChange}
-          onSubmit={handleSubmitEdit}
-          isChanged={isEditChanged}
-        />
-      )}
+        {showEditModal && (
+          <EditRecordModal
+            show={showEditModal}
+            isClosing={isClosing}
+            record={editRecord}
+            onClose={handleCloseEdit}
+            onChange={handleEditChange}
+            onSubmit={handleSubmitEdit}
+            isChanged={isEditChanged}
+          />
+        )}
 
-      {/* Toasts */}
-      <Toast message={editMessage} type="success" />
-      <Toast message={deleteMessage} type="error" />
-      <Toast message={uploadMessage} type="success" />
+        {/* Toasts */}
+        <Toast message={editMessage} type="success" />
+        <Toast message={deleteMessage} type="error" />
+        <Toast message={uploadMessage} type="success" />
+      </div>
     </div>
   );
 }

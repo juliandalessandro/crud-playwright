@@ -56,7 +56,7 @@ function EditRecordModal({ show, isClosing, record, onClose, onChange, onSubmit,
                         required
                     />
 
-                    <button className="btn-upload" type="submit" disabled={!isChanged()}>
+                    <button className="btn-submit" type="submit" disabled={!isChanged()}>
                         Save
                     </button>
                 </form>
