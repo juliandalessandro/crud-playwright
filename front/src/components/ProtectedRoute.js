@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
+import { refreshToken } from "../services/authApi";
 
 export default function ProtectedRoute({ children }) {
   const [loading, setLoading] = useState(true);
@@ -8,12 +9,28 @@ export default function ProtectedRoute({ children }) {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const res = await fetch("http://localhost:3001/auth/me", {
+        // 1️⃣ Intentar validar la sesión
+        let res = await fetch("http://localhost:3001/auth/me", {
           method: "GET",
-          credentials: "include" //  *** IMPORTANTE ***
+          credentials: "include"
         });
 
-        if (!res.ok) throw new Error("Not authorized");
+        // 2️⃣ Si token expiró → intentar refresh
+        if (res.status === 401) {
+          try {
+            await refreshToken();
+
+            // 3️⃣ Reintentar /me después del refresh
+            res = await fetch("http://localhost:3001/auth/me", {
+              method: "GET",
+              credentials: "include"
+            });
+
+            if (!res.ok) throw new Error("Still unauthorized after refresh");
+          } catch (error) {
+            throw new Error("Refresh failed");
+          }
+        }
 
         setAuthorized(true);
       } catch (err) {

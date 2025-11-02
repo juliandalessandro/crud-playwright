@@ -81,7 +81,7 @@ function Register() {
       </form>
 
       <p>
-        Already have an account? <Link to="/login">Log in here</Link>
+        Already have an account? <Link to="/login" className="link-underline">Log in here</Link>
       </p>
 
       <Toast message={toast.message} type={toast.type} />

@@ -39,6 +39,7 @@ router.post("/login", async (req, res) => {
     httpOnly: true,
     secure: false,
     sameSite: "lax",
+    domain: "localhost",
     path: "/",
     maxAge: 1000 * 60 * 15
   });
@@ -47,9 +48,11 @@ router.post("/login", async (req, res) => {
     httpOnly: true,
     secure: false,
     sameSite: "lax",
+    domain: "localhost",
     path: "/",
     maxAge: 1000 * 60 * 60 * 24 * 7
   });
+
 
   res.json({ message: "Logged in" });
 });
@@ -66,10 +69,10 @@ router.post("/refresh", (req, res) => {
 
     res.cookie("accessToken", newAccess, {
       httpOnly: true,
-      secure: false,
+      secure: false, 
       sameSite: "lax",
-      path: "/",
-      maxAge: 1000 * 60 * 15
+      maxAge: 1000 * 60 * 15,
+      path: "/"
     });
 
     return res.json({ message: "Token refreshed" });

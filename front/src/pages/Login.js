@@ -53,7 +53,7 @@ export default function Login() {
       </form>
 
       <p>
-        Don't have an account? <Link to="/register">Log in here</Link>
+        Don't have an account? <Link to="/register" className="link-underline">Register here</Link>
       </p>
 
       <Toast message={toast.message} type={toast.type} />
