@@ -6,8 +6,14 @@ function Navbar() {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    await logoutUser();
-    navigate("/login");
+    try {
+      await logoutUser();
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location = "/login"; // ✅ mejor que navigate para evitar volver atrás
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

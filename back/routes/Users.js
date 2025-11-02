@@ -1,9 +1,11 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const { users } = require("../models");
 const router = express.Router();
 const auth = require("../middleware/auth");
+const csrf = require("../middleware/csrf");
 
 const JWT_SECRET = "ACCESS_SECRET";
 const JWT_REFRESH_SECRET = "REFRESH_SECRET";
@@ -53,9 +55,19 @@ router.post("/login", async (req, res) => {
     maxAge: 1000 * 60 * 60 * 24 * 7
   });
 
+  // ✅ CSRF Token
+  const csrfToken = crypto.randomBytes(40).toString("hex");
+  res.cookie("XSRF-TOKEN", csrfToken, {
+    secure: false,
+    sameSite: "Lax",
+    domain: "localhost",
+    path: "/",
+    maxAge: 1000 * 60 * 60 * 24 * 7
+  });
 
-  res.json({ message: "Logged in" });
+  return res.json({ message: "Login successful" });
 });
+
 
 // ✅ REFRESH TOKEN
 router.post("/refresh", (req, res) => {
@@ -87,9 +99,30 @@ router.get("/me", auth, (req, res) => {
 });
 
 // ✅ LOGOUT
-router.post("/logout", (req, res) => {
-  res.clearCookie("accessToken", { path: "/" });
-  res.clearCookie("refreshToken", { path: "/" });
+router.post("/logout", auth, csrf, (req, res) => {
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    domain: "localhost",
+    path: "/"
+  });
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    domain: "localhost",
+    path: "/"
+  });
+
+  res.clearCookie("XSRF-TOKEN", {
+    secure: false,
+    sameSite: "lax",
+    domain: "localhost",
+    path: "/"
+  });
+
   return res.json({ message: "Logged out" });
 });
 

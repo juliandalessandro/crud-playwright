@@ -1,5 +1,12 @@
 const BASE_URL = "http://localhost:3001/auth";
 
+function getCookie(name) {
+  return document.cookie
+    .split("; ")
+    .find(row => row.startsWith(name + "="))
+    ?.split("=")[1];
+}
+
 export async function loginUser(email, password) {
   const res = await fetch(`http://localhost:3001/auth/login`, {
     method: "POST",
@@ -28,11 +35,19 @@ export async function registerUser(email, password) {
 };
 
 export async function logoutUser() {
-  await fetch("http://localhost:3001/auth/logout", {
+  const csrfToken = getCookie("XSRF-TOKEN");
+
+  const response = await fetch("http://localhost:3001/auth/logout", {
     method: "POST",
     credentials: "include",
+    headers: {
+      "x-csrf-token": csrfToken, // ✅ necesario ahora
+    },
   });
-};
+
+  if (!response.ok) throw new Error("Logout failed");
+  return await response.json();
+}
 
 export async function refreshToken() {
   const res = await fetch("http://localhost:3001/auth/refresh", {
