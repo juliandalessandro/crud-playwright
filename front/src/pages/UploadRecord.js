@@ -1,15 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createRecord } from "../services/recordsApi"; 
+import { useToast } from "../context/ToastContext";
 import "../App.css";
-// COMPONENTS imports
 import Navbar from "../components/Navbar";
-import Toast from "../components/Toast";
-
 
 function UploadRecord() {
-
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [record, setRecord] = useState({
     title: "",
@@ -20,7 +18,6 @@ function UploadRecord() {
   });
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setRecord({ ...record, [e.target.name]: e.target.value });
@@ -29,21 +26,17 @@ function UploadRecord() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     try {
       await createRecord(record);
-
       setRecord({ title: "", artist: "", year: "", genre: "", cover: "" });
 
-      navigate("/", { 
-        state: { toastMessage: "Record uploaded successfully" }, 
-        replace: true 
-      });
+      showToast("Record uploaded successfully!", "success");
+      navigate("/", { replace: true });
 
     } catch (err) {
       console.error(err);
-      setError("Error uploading record");
+      showToast("Error uploading record", "error");
     } finally {
       setLoading(false);
     }
@@ -51,15 +44,11 @@ function UploadRecord() {
 
   return (
     <div>
-
       <Navbar />
-      
       <div className="form-container">
         <h2>Upload Record</h2>
-
-        <Toast message={error} type="error" />
-
         <form onSubmit={handleSubmit}>
+          {/* inputs */}
           <input className="form-input" type="text" name="title" placeholder="Title" value={record.title} onChange={handleChange} required />
           <input className="form-input" type="text" name="artist" placeholder="Artist" value={record.artist} onChange={handleChange} required />
           <input className="form-input" type="number" name="year" placeholder="Year" value={record.year} onChange={handleChange} required />

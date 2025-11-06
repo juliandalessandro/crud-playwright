@@ -15,10 +15,14 @@ import DeleteRecordModal from "../components/DeleteRecordModal";
 import SearchRecordField from "../components/SearchRecordField";
 import RecordCard from "../components/RecordCard";
 import Spinner from "../components/Spinner";
-import Toast from "../components/Toast";
+
+// CONTEXT
+import { useToast } from "../context/ToastContext";
 
 function ListOfRecords() {
   const location = useLocation();
+  const { showToast } = useToast();
+
   const [listOfRecords, setListOfRecords] = useState([]);
   const [isClosing, setIsClosing] = useState(false);
 
@@ -40,16 +44,10 @@ function ListOfRecords() {
     genre: "",
     cover: "",
   });
-  const [editMessage, setEditMessage] = useState("");
 
   // DELETE
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [recordToDelete, setRecordToDelete] = useState(null);
-  const [deleteMessage, setDeleteMessage] = useState("");
-
-  // UPLOAD toast
-  const [uploadMessage, setUploadMessage] = useState("");
-  
 
   /* ------------------ FETCH records ------------------ */
   useEffect(() => {
@@ -71,18 +69,20 @@ function ListOfRecords() {
     };
 
     fetchData();
-    return () => { mounted = false };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   /* ------------------ HANDLE UPLOAD TOAST ------------------ */
   useEffect(() => {
     if (location.state?.toastMessage) {
-      setUploadMessage(location.state.toastMessage);
-      try { window.history.replaceState({}, document.title); } catch {}
-      const timer = setTimeout(() => setUploadMessage(""), 2500);
-      return () => clearTimeout(timer);
+      showToast(location.state.toastMessage, "success");
+      try {
+        window.history.replaceState({}, document.title);
+      } catch {}
     }
-  }, [location.state]);
+  }, [location.state, showToast]);
 
   /* ------------------ SEARCH ------------------ */
   useEffect(() => {
@@ -100,7 +100,8 @@ function ListOfRecords() {
 
   /* ------------------ KEYBOARD ESC ------------------ */
   useEffect(() => {
-    const handleKey = (e) => e.key === "Escape" && (handleCloseDelete(), handleCloseEdit());
+    const handleKey = (e) =>
+      e.key === "Escape" && (handleCloseDelete(), handleCloseEdit());
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, []);
@@ -125,11 +126,13 @@ function ListOfRecords() {
     try {
       await deleteRecord(recordToDelete.id);
       handleCloseDelete();
-      setListOfRecords((prev) => prev.filter((r) => r.id !== recordToDelete.id));
-      setDeleteMessage(`Deleted: ${recordToDelete.title}`);
-      setTimeout(() => setDeleteMessage(""), 2500);
+      setListOfRecords((prev) =>
+        prev.filter((r) => r.id !== recordToDelete.id)
+      );
+      showToast(`Deleted: ${recordToDelete.title}`, "success");
     } catch (err) {
       console.error("Error deleting record:", err);
+      showToast("Error deleting record", "error");
     }
   };
 
@@ -175,21 +178,17 @@ function ListOfRecords() {
     if (!recordToEdit) return;
 
     try {
-      handleCloseEdit();
       await updateRecord(recordToEdit.id, editRecord);
-
       setListOfRecords((prev) =>
         prev.map((r) =>
           r.id === recordToEdit.id ? { ...r, ...editRecord } : r
         )
       );
-
-      setEditMessage("Record updated");
-      setTimeout(() => setEditMessage(""), 2500);
+      handleCloseEdit();
+      showToast("Record updated successfully!", "success");
     } catch (err) {
       console.error("Error updating record:", err);
-      setEditMessage("Error updating record");
-      setTimeout(() => setEditMessage(""), 2500);
+      showToast("Error updating record", "error");
     }
   };
 
@@ -218,13 +217,11 @@ function ListOfRecords() {
     );
   }
 
-
   /* ------------------ RENDER ------------------ */
   return (
     <div>
       <Navbar />
       <div className="records-container">
-        
         <SearchRecordField search={search} setSearch={setSearch} />
 
         <h2>List of Records</h2>
@@ -270,11 +267,6 @@ function ListOfRecords() {
             isChanged={isEditChanged}
           />
         )}
-
-        {/* Toasts */}
-        <Toast message={editMessage} type="success" />
-        <Toast message={deleteMessage} type="error" />
-        <Toast message={uploadMessage} type="success" />
       </div>
     </div>
   );

@@ -1,23 +1,15 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../services/authApi";
+import { useToast } from "../context/ToastContext"; // <- hook desde tu contexto
 import "../App.css";
-import Toast from "../components/Toast";
 
 function Register() {
-
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
-  const [toast, setToast] = useState({ message: "", type: "" });
-
-  const [form, setForm] = useState({
-    email: "",
-    password: ""
-  });
-
+  const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -26,33 +18,25 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMsg("");
-    setSuccessMsg("");
 
     try {
       await registerUser(form.email, form.password);
-
-      setToast({ message: "Account created 🎉", type: "success" });
+      showToast("Account created 🎉", "success");
 
       setTimeout(() => {
-        navigate("/login");
-      }, 1500);
+        navigate("/login", { replace: true });
+      }, 1000);
 
     } catch (err) {
-      setToast({ message: "User already exists ❌", type: "error" });
-
-      setTimeout(() => {
-        setToast({ message: "", type: "" });
-      }, 2500);
+      showToast("User already exists ❌", "error");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="form-container">
       <h2>Register</h2>
-
-      {errorMsg && <p className="error-message">{errorMsg}</p>}
-      {successMsg && <p className="success-message">{successMsg}</p>}
 
       <form onSubmit={handleSubmit}>
         <input
@@ -81,10 +65,11 @@ function Register() {
       </form>
 
       <p>
-        Already have an account? <Link to="/login" className="link-underline">Log in here</Link>
+        Already have an account?{" "}
+        <Link to="/login" className="link-underline">
+          Log in here
+        </Link>
       </p>
-
-      <Toast message={toast.message} type={toast.type} />
     </div>
   );
 }

@@ -1,38 +1,33 @@
 import { useState } from "react";
 import { loginUser } from "../services/authApi";
 import { useNavigate, Link } from "react-router-dom";
-import Toast from "../components/Toast";
+import { useToast } from "../context/ToastContext"; // <- hook desde tu contexto
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-
   const navigate = useNavigate();
 
-  const [toast, setToast] = useState({ message: "", type: "" });
-
+  const { showToast } = useToast(); // obtiene la función para mostrar toasts
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const { token, user } = await loginUser(email, password);
 
-      // localStorage.setItem("token", token); ❌
+    try {
+      const { user } = await loginUser(email, password);
+
+      // guarda datos de usuario en local (si lo necesitarás)
       localStorage.setItem("user", JSON.stringify(user));
 
-      setToast({ message: "Login successful ✅", type: "success" });
+      showToast("Login successful ✅", "success");
 
+      // redirección limpia (reemplaza el historial para evitar volver atrás al login)
       setTimeout(() => {
-        navigate("/");
-      }, 1500);
+        navigate("/", { replace: true });
+      }, 1000);
 
     } catch (err) {
-      setToast({ message: "Invalid email or password ❌", type: "error" });
-
-      setTimeout(() => {
-        setToast({ message: "", type: "" });
-      }, 2500);
+      showToast("Invalid email or password ❌", "error");
     }
   };
 
@@ -40,24 +35,34 @@ export default function Login() {
     <div className="form-container">
       <h2>Login</h2>
 
-      {error && <p className="error-message">{error}</p>}
-
       <form onSubmit={handleSubmit}>
-        <input className="form-input" value={email} onChange={(e) => setEmail(e.target.value)}
-          type="email" required placeholder="Email" />
+        <input
+          className="form-input"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          type="email"
+          required
+          placeholder="Email"
+        />
 
-        <input className="form-input" value={password} onChange={(e) => setPassword(e.target.value)}
-          type="password" required placeholder="Password" />
+        <input
+          className="form-input"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          type="password"
+          required
+          placeholder="Password"
+        />
 
         <button className="btn-submit">Login</button>
       </form>
 
       <p>
-        Don't have an account? <Link to="/register" className="link-underline">Register here</Link>
+        Don't have an account?{" "}
+        <Link to="/register" className="link-underline">
+          Register here
+        </Link>
       </p>
-
-      <Toast message={toast.message} type={toast.type} />
-
     </div>
   );
 }

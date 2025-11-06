@@ -5,22 +5,28 @@ import UploadRecord from "./pages/UploadRecord";
 import Login from "./pages/Login";
 import Register from './pages/Register';
 import ProtectedRoute from "./components/ProtectedRoute";
+import { ToastProvider } from "./context/ToastContext";
+import ToastContainer from "./components/ToastContainer";
 
 function App() {
 
   return (
-    <Router>
-      <div className="App"> 
+    <ToastProvider>
+      <Router>
+        <div className="App"> 
 
-        <Routes>
-          <Route path="/" element={<ProtectedRoute><ListOfRecords /></ProtectedRoute>}/>
-          <Route path="/uploadRecord" element={<ProtectedRoute><UploadRecord /></ProtectedRoute>}/>
-          <Route path="/register" element={<Register />}/>
-          <Route path="/login" element={<Login />}/>
-        </Routes>
-      </div>
-    </Router>
-    
+          <Routes>
+            <Route path="/" element={<ProtectedRoute><ListOfRecords /></ProtectedRoute>}/>
+            <Route path="/uploadRecord" element={<ProtectedRoute><UploadRecord /></ProtectedRoute>}/>
+            <Route path="/register" element={<Register />}/>
+            <Route path="/login" element={<Login />}/>
+          </Routes>
+
+          <ToastContainer />
+          
+        </div>
+      </Router>
+    </ToastProvider>
   );
 }
 
