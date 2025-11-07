@@ -8,11 +8,13 @@ function getCookie(name) {
 }
 
 export async function loginUser(email, password) {
-  const res = await fetch(`http://localhost:3001/auth/login`, {
+  const res = await fetch("http://localhost:3001/auth/login", {
     method: "POST",
-    credentials: "include",     // <-- necesario para cookies
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
+    credentials: "include",   // ✅ OBLIGATORIO
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email, password })
   });
 
   if (!res.ok) throw new Error("Login failed");
@@ -22,6 +24,7 @@ export async function loginUser(email, password) {
 export async function registerUser(email, password) {
   const response = await fetch(`${BASE_URL}/register`, {
     method: "POST",
+    credentials: "include",   // ✅ OBLIGATORIO
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });

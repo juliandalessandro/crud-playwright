@@ -24,7 +24,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// ✅ LOGIN
+// ✅ LOGIN (CORREGIDO para devolver user)
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -65,9 +65,14 @@ router.post("/login", async (req, res) => {
     maxAge: 1000 * 60 * 60 * 24 * 7
   });
 
-  return res.json({ message: "Login successful" });
+  return res.json({
+    message: "Login successful",
+    user: {
+      id: user.id,
+      email: user.email
+    }
+  });
 });
-
 
 // ✅ REFRESH TOKEN
 router.post("/refresh", (req, res) => {
@@ -81,7 +86,7 @@ router.post("/refresh", (req, res) => {
 
     res.cookie("accessToken", newAccess, {
       httpOnly: true,
-      secure: false, 
+      secure: false,
       sameSite: "lax",
       maxAge: 1000 * 60 * 15,
       path: "/"
@@ -93,7 +98,7 @@ router.post("/refresh", (req, res) => {
   }
 });
 
-// ✅ CHECK SESSION (/auth/me)
+// ✅ CHECK SESSION
 router.get("/me", auth, (req, res) => {
   res.json({ user: req.user });
 });

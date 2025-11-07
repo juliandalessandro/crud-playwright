@@ -1,23 +1,21 @@
 import { useState } from "react";
-import { loginUser } from "../services/authApi";
 import { useNavigate, Link } from "react-router-dom";
-import { useToast } from "../context/ToastContext"; // <- hook desde tu contexto
+import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const { showToast } = useToast(); // obtiene la función para mostrar toasts
+  const { login } = useAuth();
+  const { showToast } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const { user } = await loginUser(email, password);
-
-      // guarda datos de usuario en local (si lo necesitarás)
-      localStorage.setItem("user", JSON.stringify(user));
+      await login(email, password);
 
       showToast("Login successful ✅", "success");
 
@@ -25,7 +23,6 @@ export default function Login() {
       setTimeout(() => {
         navigate("/", { replace: true });
       }, 1000);
-
     } catch (err) {
       showToast("Invalid email or password ❌", "error");
     }

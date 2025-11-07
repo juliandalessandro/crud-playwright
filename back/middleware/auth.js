@@ -1,15 +1,15 @@
 const jwt = require("jsonwebtoken");
+const JWT_SECRET = "ACCESS_SECRET";
 
-module.exports = function (req, res, next) {
-  const token = req.cookies.accessToken; // ✅ nombre correcto
-
-  if (!token) return res.status(401).json({ error: "Not authorized" });
+module.exports = (req, res, next) => {
+  const token = req.cookies.accessToken;
+  if (!token) return res.status(401).json({ error: "No token" });
 
   try {
-    const data = jwt.verify(token, "ACCESS_SECRET"); // ✅ mismo secreto que usaste al firmar
-    req.user = data;
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
     next();
-  } catch (err) {
+  } catch {
     return res.status(401).json({ error: "Invalid token" });
   }
 };

@@ -65,6 +65,116 @@ body.modal-open {
   background-color: #e04242;
 }
 
+/* ========= MENU DROPDOWN (PROFESSIONAL STYLE) ========= */
+.menu-container {
+  position: relative;
+}
+
+.menu-toggle {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 32px;
+  height: 26px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  transition: transform 0.25s ease;
+}
+
+.menu-toggle:hover {
+  transform: scale(1.1);
+}
+
+.bar {
+  height: 3px;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+/* Animación del icono hamburguesa -> X */
+.menu-toggle.active .bar:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+.menu-toggle.active .bar:nth-child(2) {
+  opacity: 0;
+}
+.menu-toggle.active .bar:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+}
+
+/* Dropdown */
+.menu-dropdown {
+  position: absolute;
+  top: 42px;
+  right: 0;
+  background: #2b2b2b;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  min-width: 160px;
+  z-index: 100;
+  animation: dropdownFadeIn 0.25s ease-out forwards;
+  border: 1px solid #3b3b3b;
+}
+
+.user-id-label {
+  color: white;
+  margin-right: 12px;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.dropdown-option {
+  display: block;
+  width: 100%;
+  padding: 11px 18px;
+  background: transparent;
+  border: none;
+  color: #f2f2f2;
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.dropdown-option:hover {
+  background-color: #3b3b3b;
+  color: #fff;
+}
+
+.dropdown-divider {
+  border: none;
+  border-top: 1px solid #444;
+  margin: 4px 0;
+  opacity: 0.6;
+}
+
+.logout-option {
+  color: #ff6961;
+  font-weight: 600;
+}
+
+.logout-option:hover {
+  background-color: #3b3b3b;
+  color: #ff8680;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
 /* ========= SPINNER ========= */
 
 .spinner {

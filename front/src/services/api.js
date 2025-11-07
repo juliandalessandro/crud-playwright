@@ -5,14 +5,14 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// ✅ Obtener token desde la cookie
+// ✅ Obtener token desde cookie
 function getCsrfToken() {
   const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
   return match ? decodeURIComponent(match[1]) : null;
 }
 
-// ✅ Interceptor: agregar CSRF automáticamente
-api.interceptors.request.use(config => {
+// ✅ Interceptor: agrega CSRF
+api.interceptors.request.use((config) => {
   const token = getCsrfToken();
   if (["post", "put", "patch", "delete"].includes(config.method)) {
     config.headers["X-CSRF-Token"] = token;
@@ -25,17 +25,17 @@ api.interceptors.request.use(config => {
 let isRefreshing = false;
 let failedQueue = [];
 
-function processQueue(error, token = null) {
-  failedQueue.forEach(prom => {
-    if (error) prom.reject(error);
-    else prom.resolve(token);
+function processQueue(error = null) {
+  failedQueue.forEach((p) => {
+    if (error) p.reject(error);
+    else p.resolve();
   });
   failedQueue = [];
 }
 
 api.interceptors.response.use(
-  res => res,
-  async err => {
+  (res) => res,
+  async (err) => {
     const originalRequest = err.config;
 
     if (err.response?.status === 401 && !originalRequest._retry) {
@@ -50,12 +50,14 @@ api.interceptors.response.use(
 
       try {
         await api.post("/auth/refresh");
+
         isRefreshing = false;
-        processQueue(null);
+        processQueue();
+
         return api(originalRequest);
       } catch (refreshErr) {
         isRefreshing = false;
-        processQueue(refreshErr, null);
+        processQueue(refreshErr);
         window.location.href = "/login";
         return Promise.reject(refreshErr);
       }
