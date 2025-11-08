@@ -37,13 +37,6 @@ function ListOfRecords() {
   // EDIT
   const [showEditModal, setShowEditModal] = useState(false);
   const [recordToEdit, setRecordToEdit] = useState(null);
-  const [editRecord, setEditRecord] = useState({
-    title: "",
-    artist: "",
-    year: "",
-    genre: "",
-    cover: "",
-  });
 
   // DELETE
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -139,27 +132,8 @@ function ListOfRecords() {
   /* ------------------ EDIT ------------------ */
   const handleEdit = (record) => {
     setRecordToEdit(record);
-    setEditRecord({
-      title: record.title ?? "",
-      artist: record.artist ?? "",
-      year: record.year ?? "",
-      genre: record.genre ?? "",
-      cover: record.cover ?? "",
-    });
     setShowEditModal(true);
     document.body.classList.add("modal-open");
-  };
-
-  const handleEditChange = (e) => {
-    setEditRecord((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const isEditChanged = () => {
-    if (!recordToEdit) return false;
-    const fields = ["title", "artist", "year", "genre", "cover"];
-    return fields.some(
-      (key) => String(recordToEdit[key] ?? "") !== String(editRecord[key] ?? "")
-    );
   };
 
   const handleCloseEdit = () => {
@@ -169,26 +143,18 @@ function ListOfRecords() {
       setIsClosing(false);
       document.body.classList.remove("modal-open");
       setRecordToEdit(null);
-      setEditRecord({ title: "", artist: "", year: "", genre: "", cover: "" });
     }, 200);
   };
 
-  const handleSubmitEdit = async (e) => {
-    e.preventDefault();
-    if (!recordToEdit) return;
-
+  const handleSubmitEdit = async (id, data) => {
     try {
-      await updateRecord(recordToEdit.id, editRecord);
+      await updateRecord(id, data);
       setListOfRecords((prev) =>
-        prev.map((r) =>
-          r.id === recordToEdit.id ? { ...r, ...editRecord } : r
-        )
+        prev.map((r) => (r.id === id ? { ...r, ...data } : r))
       );
-      handleCloseEdit();
-      showToast("Record updated successfully!", "success");
     } catch (err) {
       console.error("Error updating record:", err);
-      showToast("Error updating record", "error");
+      throw err; // para que el modal muestre toast de error
     }
   };
 
@@ -256,15 +222,13 @@ function ListOfRecords() {
           />
         )}
 
-        {showEditModal && (
+        {showEditModal && recordToEdit && (
           <EditRecordModal
             show={showEditModal}
             isClosing={isClosing}
-            record={editRecord}
+            record={recordToEdit}
             onClose={handleCloseEdit}
-            onChange={handleEditChange}
             onSubmit={handleSubmitEdit}
-            isChanged={isEditChanged}
           />
         )}
       </div>
