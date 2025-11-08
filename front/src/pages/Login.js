@@ -1,30 +1,59 @@
-import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 
-export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
+// ✅ Schema Zod con validaciones serias estilo SaaS
+const loginSchema = z.object({
+  identifier: z
+    .string()
+    .min(3, "Debe tener al menos 3 caracteres.")
+    .refine(
+      (val) => {
+        // email válido o username válido
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const usernameRegex = /^[a-zA-Z0-9_.-]{3,}$/;
+        return emailRegex.test(val) || usernameRegex.test(val);
+      },
+      {
+        message: "Debe ser un email válido o un usuario alfanumérico.",
+      }
+    ),
+  password: z
+    .string()
+    .min(6, "La contraseña debe tener al menos 6 caracteres.")
+    .max(100, "La contraseña es demasiado larga."),
+});
+
+export default function Login() {
+  const navigate = useNavigate();
   const { login } = useAuth();
   const { showToast } = useToast();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+  });
 
+  // ✅ Mantengo tu lógica de login intacta
+  const onSubmit = async (data) => {
     try {
-      await login(email, password);
+      // Ahora mandamos "identifier" (email O username)
+      await login(data.identifier, data.password);
 
       showToast("Login successful ✅", "success");
 
-      // redirección limpia (reemplaza el historial para evitar volver atrás al login)
       setTimeout(() => {
         navigate("/", { replace: true });
       }, 1000);
     } catch (err) {
-      showToast("Invalid email or password ❌", "error");
+      showToast("Invalid credentials ❌", "error");
     }
   };
 
@@ -32,26 +61,31 @@ export default function Login() {
     <div className="form-container">
       <h2>Login</h2>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {/* ✅ Email OR Username */}
         <input
           className="form-input"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          type="email"
-          required
-          placeholder="Email"
+          placeholder="Email or Username"
+          {...register("identifier")}
         />
+        {errors.identifier && (
+          <span style={{ color: "red" }}>{errors.identifier.message}</span>
+        )}
 
+        {/* ✅ Password */}
         <input
           className="form-input"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
           type="password"
-          required
           placeholder="Password"
+          {...register("password")}
         />
+        {errors.password && (
+          <span style={{ color: "red" }}>{errors.password.message}</span>
+        )}
 
-        <button className="btn-submit">Login</button>
+        <button className="btn-submit" disabled={isSubmitting}>
+          {isSubmitting ? "Logging in..." : "Login"}
+        </button>
       </form>
 
       <p>

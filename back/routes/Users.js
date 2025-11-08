@@ -6,29 +6,57 @@ const { users } = require("../models");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const csrf = require("../middleware/csrf");
+const { Op } = require("sequelize");
 
 const JWT_SECRET = "ACCESS_SECRET";
 const JWT_REFRESH_SECRET = "REFRESH_SECRET";
 
-// ✅ REGISTER
+// ✅ REGISTER (sin Zod)
 router.post("/register", async (req, res) => {
-  const { email, password } = req.body;
-
-  const hashed = await bcrypt.hash(password, 10);
-
   try {
-    const user = await users.create({ email, password: hashed });
-    res.json({ message: "User created", user });
-  } catch {
-    res.status(400).json({ error: "User already exists" });
+    const { username, email, password } = req.body;
+
+    // Validación mínima manual opcional
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: "Missing fields" });
+    }
+
+    // Chequear si ya existe mail o username
+    const existing = await users.findOne({
+      where: {
+        [Op.or]: [{ email }, { username }]
+      }
+    });
+
+    if (existing) {
+      return res.status(400).json({ error: "User already exists" });
+    }
+
+    const hashed = await bcrypt.hash(password, 10);
+
+    const newUser = await users.create({
+      username,
+      email,
+      password: hashed
+    });
+
+    return res.json({ message: "User created", user: newUser });
+
+  } catch (err) {
+    return res.status(400).json({ error: "Registration failed" });
   }
 });
 
-// ✅ LOGIN (CORREGIDO para devolver user)
+// ✅ LOGIN
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const { identifier, password } = req.body;
 
-  const user = await users.findOne({ where: { email } });
+  const user = await users.findOne({
+    where: {
+      [Op.or]: [{ email: identifier }, { username: identifier }]
+    }
+  });
+
   if (!user) return res.status(401).json({ error: "Invalid login" });
 
   const match = await bcrypt.compare(password, user.password);
@@ -55,7 +83,6 @@ router.post("/login", async (req, res) => {
     maxAge: 1000 * 60 * 60 * 24 * 7
   });
 
-  // ✅ CSRF Token
   const csrfToken = crypto.randomBytes(40).toString("hex");
   res.cookie("XSRF-TOKEN", csrfToken, {
     secure: false,
@@ -69,12 +96,12 @@ router.post("/login", async (req, res) => {
     message: "Login successful",
     user: {
       id: user.id,
-      email: user.email
+      email: user.email,
+      username: user.username
     }
   });
 });
 
-// ✅ REFRESH TOKEN
 router.post("/refresh", (req, res) => {
   const token = req.cookies.refreshToken;
   if (!token) return res.status(401).json({ error: "No refresh token" });
@@ -82,7 +109,11 @@ router.post("/refresh", (req, res) => {
   try {
     const decoded = jwt.verify(token, JWT_REFRESH_SECRET);
 
-    const newAccess = jwt.sign({ id: decoded.id }, JWT_SECRET, { expiresIn: "15m" });
+    const newAccess = jwt.sign(
+      { id: decoded.id },
+      JWT_SECRET,
+      { expiresIn: "15m" }
+    );
 
     res.cookie("accessToken", newAccess, {
       httpOnly: true,
@@ -98,12 +129,10 @@ router.post("/refresh", (req, res) => {
   }
 });
 
-// ✅ CHECK SESSION
 router.get("/me", auth, (req, res) => {
   res.json({ user: req.user });
 });
 
-// ✅ LOGOUT
 router.post("/logout", auth, csrf, (req, res) => {
   res.clearCookie("accessToken", {
     httpOnly: true,

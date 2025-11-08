@@ -1,36 +1,46 @@
-import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useToast } from "../context/ToastContext";
 import { registerUser } from "../services/authApi";
-import { useToast } from "../context/ToastContext"; // <- hook desde tu contexto
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import "../App.css";
 
-function Register() {
+// ✅ Validación Zod
+const registerSchema = z.object({
+  username: z
+    .string()
+    .min(3, "Username must have at least 3 characters")
+    .regex(/^[a-zA-Z0-9_.-]+$/, "Only letters, numbers, _, -, . allowed"),
+  email: z.string().email("Invalid email"),
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters")
+});
+
+export default function Register() {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting }
+  } = useForm({
+    resolver: zodResolver(registerSchema)
+  });
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
+  const onSubmit = async (data) => {
     try {
-      await registerUser(form.email, form.password);
+      await registerUser(data.email, data.password, data.username);
+
       showToast("Account created 🎉", "success");
 
       setTimeout(() => {
         navigate("/login", { replace: true });
       }, 1000);
-
     } catch (err) {
-      showToast("User already exists ❌", "error");
-    } finally {
-      setLoading(false);
+      showToast(err.message || "User already exists ❌", "error");
     }
   };
 
@@ -38,29 +48,39 @@ function Register() {
     <div className="form-container">
       <h2>Register</h2>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+
+        <input
+          className="form-input"
+          placeholder="Username"
+          {...register("username")}
+        />
+        {errors.username && (
+          <span style={{ color: "red" }}>{errors.username.message}</span>
+        )}
+
         <input
           className="form-input"
           type="email"
-          name="email"
           placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          required
+          {...register("email")}
         />
+        {errors.email && (
+          <span style={{ color: "red" }}>{errors.email.message}</span>
+        )}
 
         <input
           className="form-input"
           type="password"
-          name="password"
           placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          required
+          {...register("password")}
         />
+        {errors.password && (
+          <span style={{ color: "red" }}>{errors.password.message}</span>
+        )}
 
-        <button className="btn-submit" type="submit" disabled={loading}>
-          {loading ? "Registering..." : "Register"}
+        <button className="btn-submit" disabled={isSubmitting}>
+          {isSubmitting ? "Registering..." : "Register"}
         </button>
       </form>
 
@@ -73,5 +93,3 @@ function Register() {
     </div>
   );
 }
-
-export default Register;

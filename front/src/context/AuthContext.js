@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
 
   const [loading, setLoading] = useState(true);
 
-  // ✅ Intentar restaurar sesión al cargar la app
+  // ✅ Restaurar sesión al cargar la app
   useEffect(() => {
     const restoreSession = async () => {
       try {
@@ -27,7 +27,6 @@ export const AuthProvider = ({ children }) => {
           localStorage.setItem("user", JSON.stringify(res.data.user));
         }
       } catch {
-        // Si falla /me, intentamos refresh
         try {
           await api.post("/auth/refresh");
 
@@ -45,9 +44,9 @@ export const AuthProvider = ({ children }) => {
     restoreSession();
   }, []);
 
-  // ✅ Login
-  const login = async (email, password) => {
-    const data = await loginUser(email, password);
+  // ✅ Login actualizado: recibe "identifier" (email o username)
+  const login = async (identifier, password) => {
+    const data = await loginUser(identifier, password); // 🔹 aquí ya mandamos identifier
     const loggedUser = data.user;
 
     setUser(loggedUser);
@@ -56,9 +55,10 @@ export const AuthProvider = ({ children }) => {
     return loggedUser;
   };
 
-  // ✅ Register
-  const register = async (email, password) => {
-    return await registerUser(email, password);
+  // ✅ Register actualizado: recibe username, email y password
+  const register = async (username, email, password) => {
+    const data = await registerUser(email, password, username); // 🔹 username agregado
+    return data;
   };
 
   // ✅ Logout
