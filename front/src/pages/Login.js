@@ -6,26 +6,31 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-// ✅ Schema Zod con validaciones serias estilo SaaS
+// Zod schema with validations
 const loginSchema = z.object({
   identifier: z
     .string()
-    .min(3, "Debe tener al menos 3 caracteres.")
+    .min(1, "Email or username is required")
     .refine(
       (val) => {
-        // email válido o username válido
+        // Valid email or username
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const usernameRegex = /^[a-zA-Z0-9_.-]{3,}$/;
+        
+        // Username: 3-30 characters, only letters, numbers, -, . and _
+        const usernameRegex = /^[a-zA-Z0-9._-]{3,30}$/;
+        
         return emailRegex.test(val) || usernameRegex.test(val);
       },
       {
-        message: "Debe ser un email válido o un usuario alfanumérico.",
+        message: "Enter a valid email or username",
       }
     ),
+  
   password: z
     .string()
-    .min(6, "La contraseña debe tener al menos 6 caracteres.")
-    .max(100, "La contraseña es demasiado larga."),
+    .min(1, "Password is required")
+    .min(6, "Password must be at least 6 characters")
+    .max(128, "Password is too long"),
 });
 
 export default function Login() {
@@ -41,10 +46,8 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
   });
 
-  // ✅ Mantengo tu lógica de login intacta
   const onSubmit = async (data) => {
     try {
-      // Ahora mandamos "identifier" (email O username)
       await login(data.identifier, data.password);
 
       showToast("Login successful ✅", "success");
@@ -62,28 +65,40 @@ export default function Login() {
       <h2>Login</h2>
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        {/* ✅ Email OR Username */}
+        {/* Email OR Username */}
         <input
           className="form-input"
           placeholder="Email or Username"
+          data-testid="login-email-username"
+          autoComplete="username"
           {...register("identifier")}
         />
         {errors.identifier && (
-          <span style={{ color: "red" }}>{errors.identifier.message}</span>
+          <span style={{ color: "red" }} data-testid="email-username-error">
+            {errors.identifier.message}
+          </span>
         )}
 
-        {/* ✅ Password */}
+        {/* Password */}
         <input
           className="form-input"
           type="password"
           placeholder="Password"
+          data-testid="login-password"
+          autoComplete="current-password"
           {...register("password")}
         />
         {errors.password && (
-          <span style={{ color: "red" }}>{errors.password.message}</span>
+          <span style={{ color: "red" }} data-testid="password-error">
+            {errors.password.message}
+          </span>
         )}
 
-        <button className="btn-submit" disabled={isSubmitting}>
+        <button 
+          className="btn-submit" 
+          disabled={isSubmitting}
+          data-testid="login-button"
+        >
           {isSubmitting ? "Logging in..." : "Login"}
         </button>
       </form>

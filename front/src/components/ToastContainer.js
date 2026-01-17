@@ -11,7 +11,7 @@ function ToastContainer() {
       ? "toast-message"
       : "toast-message-edit-upload";
 
-  return <div className={className}>{toast.message}</div>;
+  return <div className={className} data-testid="toast-message">{toast.message}</div>;
 }
 
 export default ToastContainer;
