@@ -1,0 +1,15 @@
+node_modules
+*/node_modules
+back/node_modules
+front/node_modules
+build
+dist
+*/build
+*/dist
+test-results
+playwright-report
+.git
+*.log
+.DS_Store
+.env
+coverage

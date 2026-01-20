@@ -44,7 +44,7 @@ function Navbar() {
           <Link className="navbar-link" to="/">List</Link>
         </li>
         <li className="navbar-li">
-          <Link className="navbar-link" to="/uploadRecord">Upload</Link>
+          <Link className="navbar-link" to="/uploadRecord" data-testid="upload-record-button">Upload</Link>
         </li>
       </ul>
 

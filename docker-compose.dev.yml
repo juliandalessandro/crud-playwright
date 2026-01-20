@@ -1,0 +1,75 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: allmusic-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: allmusic
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_dev_data:/var/lib/mysql
+      # Si tenés un dump de XAMPP, poné el archivo init.sql en la raíz
+      # y descomentá esta línea:
+      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root"]
+      timeout: 20s
+      retries: 10
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: allmusic-phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      - PMA_HOST=db
+      - PMA_USER=root
+      - PMA_PASSWORD=
+    depends_on:
+      - db
+
+  backend:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    container_name: allmusic-backend
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=db
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./back:/app
+      - /app/node_modules
+    # Si tenés nodemon configurado:
+    # command: npm run dev
+    # Si no, dejá el comando por defecto del Dockerfile
+
+  # frontend:
+  #   build:
+  #     context: ./front
+  #     dockerfile: Dockerfile
+  #   container_name: allmusic-frontend
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - REACT_APP_API_URL=http://localhost:3001
+  #     - CHOKIDAR_USEPOLLING=true
+  #     - WATCHPACK_POLLING=true
+  #     - HOST=0.0.0.0
+  #   depends_on:
+  #     - backend
+  #   volumes:
+  #     - ./front:/app
+  #   stdin_open: true
+  #   tty: true
+
+
+volumes:
+  mysql_dev_data:

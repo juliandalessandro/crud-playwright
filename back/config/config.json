@@ -3,21 +3,21 @@
     "username": "root",
     "password": null,
     "database": "allmusic",
-    "host": "127.0.0.1",
+    "host": "db",
     "dialect": "mysql"
   },
   "test": {
     "username": "root",
     "password": null,
-    "database": "database_test",
-    "host": "127.0.0.1",
+    "database": "allmusic_test",
+    "host": "db",
     "dialect": "mysql"
   },
   "production": {
     "username": "root",
     "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
+    "database": "allmusic_production",
+    "host": "db",
     "dialect": "mysql"
   }
 }

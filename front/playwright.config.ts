@@ -28,7 +28,6 @@ export default defineConfig({
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
     baseURL: 'http://localhost:3000',
-
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
@@ -36,18 +35,27 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: 'login',
+      testMatch: /login-e2e\.spec\.ts/,
     },
-
     {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      name: 'setup',
+      testMatch: /auth\.setup\.spec\.ts/,
     },
-
     {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      name: 'e2e',
+      testMatch: /.*-e2e\.spec\.ts/,
+      dependencies: ['setup'],
+      use: {
+        storageState: 'storage/auth.json',
+      },
+    },
+    {
+      name: 'api',
+      testMatch: /api\/.*\.spec\.ts/,
+      use: {
+        baseURL: 'http://localhost:3001',
+      },
     },
 
     /* Test against mobile viewports. */
@@ -72,9 +80,13 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  webServer: {
+    command: 'npm start', // o 'npm run dev' si usas Vite
+    url: 'http://localhost:3000',
+    reuseExistingServer: !process.env.CI, // Reutiliza si ya está corriendo
+    timeout: 120 * 1000, // 2 minutos para que arranque
+    stdout: 'ignore', // No muestra logs (opcional)
+    stderr: 'pipe', // Muestra solo errores
+  },
+  
 });

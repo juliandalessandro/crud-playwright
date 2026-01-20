@@ -7,9 +7,9 @@ export interface User {
 
 export const validUser: User[] = [
     {
-        username: 'usuario1',
-        email: "usuario1@gmail.com",
-        password: 'usuario1',
+        username: 'user1',
+        email: "user1@gmail.com",
+        password: 'user1pwd',
         description: 'Valid User',
         
     }
@@ -17,9 +17,9 @@ export const validUser: User[] = [
 
 export const invalidUser: User[] = [
     {
-        username: 'usuario1',
-        email: "usuario1@gmail.com",
-        password: 'usuario2',
+        username: 'user1',
+        email: "user1@gmail.com",
+        password: 'user2pwd',
         description: 'Invalid User',
         
     }

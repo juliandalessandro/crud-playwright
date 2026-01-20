@@ -1,0 +1,31 @@
+{
+  "name": "crud-playwright",
+  "version": "1.0.0",
+  "scripts": {
+    "// DESARROLLO": "DEV scripts",
+    "dev": "docker-compose -f docker-compose.dev.yml up -d",
+    "dev:down": "docker-compose -f docker-compose.dev.yml down",
+    "dev:logs": "docker-compose -f docker-compose.dev.yml logs -f",
+    "dev:logs:backend": "docker-compose -f docker-compose.dev.yml logs -f backend",
+    "dev:logs:frontend": "docker-compose -f docker-compose.dev.yml logs -f frontend",
+    "dev:rebuild": "docker-compose -f docker-compose.dev.yml up -d --build",
+    "dev:restart": "docker-compose -f docker-compose.dev.yml restart",
+    
+    "// BASE DE DATOS": "DB scripts",
+    "db:shell": "docker-compose -f docker-compose.dev.yml exec db mysql -u root allmusic",
+    "db:migrate": "docker-compose -f docker-compose.dev.yml exec backend npx sequelize-cli db:migrate",
+    "db:seed": "docker-compose -f docker-compose.dev.yml exec backend npx sequelize-cli db:seed:all",
+    "db:reset": "docker-compose -f docker-compose.dev.yml exec backend npx sequelize-cli db:migrate:undo:all && npm run db:migrate && npm run db:seed",
+    
+    "// TESTS": "Playwright test scripts",
+    "test": "docker-compose run --rm playwright",
+    "test:ui": "cd front && npx playwright test --ui",
+    "test:headed": "docker-compose run --rm playwright npx playwright test --headed",
+    "test:debug": "cd front && npx playwright test --debug",
+    "test:report": "cd front && npx playwright show-report",
+    
+    "// DOCKER": "Docker util scripts",
+    "docker:clean": "docker-compose -f docker-compose.dev.yml down -v && docker system prune -f",
+    "docker:rebuild:all": "docker-compose -f docker-compose.dev.yml down && docker-compose -f docker-compose.dev.yml build --no-cache && docker-compose -f docker-compose.dev.yml up -d"
+  }
+}
