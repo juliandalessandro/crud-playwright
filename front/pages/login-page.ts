@@ -1,5 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
-import { LOGIN_MESSAGES } from "../fixtures/testData";
+import { LOGIN_MESSAGES } from "../fixtures/loginTestData";
 
 export class LoginPage {
     

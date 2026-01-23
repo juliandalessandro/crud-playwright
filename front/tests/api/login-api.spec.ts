@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { validUser } from '../../fixtures/testData';
+import { validUser } from '../../fixtures/loginTestData';
 
 test.describe('Auth API', () => {
 

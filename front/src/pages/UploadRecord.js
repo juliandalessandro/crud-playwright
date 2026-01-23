@@ -62,6 +62,7 @@ export default function UploadRecord() {
           <input
             className="form-input"
             placeholder="Title"
+            data-testid="title-uploadRecord-input"
             {...register("title")}
           />
           {errors.title && <span style={{ color: "red" }}>{errors.title.message}</span>}
@@ -69,6 +70,7 @@ export default function UploadRecord() {
           <input
             className="form-input"
             placeholder="Artist"
+            data-testid="artist-uploadRecord-input"
             {...register("artist")}
           />
           {errors.artist && <span style={{ color: "red" }}>{errors.artist.message}</span>}
@@ -77,6 +79,7 @@ export default function UploadRecord() {
             className="form-input"
             type="number"
             placeholder="Year"
+            data-testid="year-uploadRecord-input"
             {...register("year", { valueAsNumber: true })}
           />
           {errors.year && <span style={{ color: "red" }}>{errors.year.message}</span>}
@@ -84,6 +87,7 @@ export default function UploadRecord() {
           <input
             className="form-input"
             placeholder="Genre"
+            data-testid="genre-uploadRecord-input"
             {...register("genre")}
           />
           {errors.genre && <span style={{ color: "red" }}>{errors.genre.message}</span>}
@@ -91,11 +95,12 @@ export default function UploadRecord() {
           <input
             className="form-input"
             placeholder="Cover URL"
+            data-testid="coverURL-uploadRecord-input"
             {...register("cover")}
           />
           {errors.cover && <span style={{ color: "red" }}>{errors.cover.message}</span>}
 
-          <button className="btn-submit" type="submit" disabled={isSubmitting}>
+          <button className="btn-submit" type="submit" disabled={isSubmitting} data-testid="uploadRecord-button">
             {isSubmitting ? "Uploading..." : "Upload"}
           </button>
         </form>
