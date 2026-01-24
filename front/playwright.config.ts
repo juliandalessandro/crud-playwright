@@ -35,10 +35,6 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'login',
-      testMatch: /login-e2e\.spec\.ts/,
-    },
-    {
       name: 'setup',
       testMatch: /auth\.setup\.spec\.ts/,
     },

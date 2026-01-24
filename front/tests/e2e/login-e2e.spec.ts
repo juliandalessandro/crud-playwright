@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { LoginPage } from '../../pages/login-page';
 import { validUser, invalidUser } from "../../fixtures/loginTestData";
 
-test.describe('Login Flow', () => {
+test.describe('Login Flows', () => {
 
     let loginPage: LoginPage;
 

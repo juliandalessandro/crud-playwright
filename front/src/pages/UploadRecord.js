@@ -7,15 +7,28 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import "../App.css";
 import Navbar from "../components/Navbar";
 
-// ✅ Schema Zod para validar el formulario
 const recordSchema = z.object({
   title: z.string().min(1, "Title is required"),
   artist: z.string().min(1, "Artist is required"),
   year: z
-    .number({ invalid_type_error: "Year must be a number" })
-    .int("Year must be an integer")
-    .min(1900, "Year must be 1900 or later")
-    .max(new Date().getFullYear(), `Year cannot be later than ${new Date().getFullYear()}`),
+    .union([
+      z.number({
+        invalid_type_error: "Year must be a number",
+      }),
+      z.nan()
+    ])
+    .refine((val) => val !== undefined && !Number.isNaN(val), {
+      message: "Year is required",
+    })
+    .refine((val) => Number.isInteger(val), {
+      message: "Year must be an integer",
+    })
+    .refine((val) => val >= 1900, {
+      message: "Year must be 1900 or later",
+    })
+    .refine((val) => val <= new Date().getFullYear(), {
+      message: `Year cannot be later than ${new Date().getFullYear()}`,
+    }),
   genre: z.string().min(1, "Genre is required"),
   cover: z.string().url("Cover must be a valid URL"),
 });
@@ -65,7 +78,7 @@ export default function UploadRecord() {
             data-testid="title-uploadRecord-input"
             {...register("title")}
           />
-          {errors.title && <span style={{ color: "red" }}>{errors.title.message}</span>}
+          {errors.title && <span style={{ color: "red" }} data-testid="record-upload-title-error">{errors.title.message}</span>}
 
           <input
             className="form-input"
@@ -73,7 +86,7 @@ export default function UploadRecord() {
             data-testid="artist-uploadRecord-input"
             {...register("artist")}
           />
-          {errors.artist && <span style={{ color: "red" }}>{errors.artist.message}</span>}
+          {errors.artist && <span style={{ color: "red" }} data-testid="record-upload-artist-error">{errors.artist.message}</span>}
 
           <input
             className="form-input"
@@ -82,7 +95,7 @@ export default function UploadRecord() {
             data-testid="year-uploadRecord-input"
             {...register("year", { valueAsNumber: true })}
           />
-          {errors.year && <span style={{ color: "red" }}>{errors.year.message}</span>}
+          {errors.year && <span style={{ color: "red" }} data-testid="record-upload-year-error">{errors.year.message}</span>}
 
           <input
             className="form-input"
@@ -90,7 +103,7 @@ export default function UploadRecord() {
             data-testid="genre-uploadRecord-input"
             {...register("genre")}
           />
-          {errors.genre && <span style={{ color: "red" }}>{errors.genre.message}</span>}
+          {errors.genre && <span style={{ color: "red" }} data-testid="record-upload-genre-error">{errors.genre.message}</span>}
 
           <input
             className="form-input"
@@ -98,7 +111,7 @@ export default function UploadRecord() {
             data-testid="coverURL-uploadRecord-input"
             {...register("cover")}
           />
-          {errors.cover && <span style={{ color: "red" }}>{errors.cover.message}</span>}
+          {errors.cover && <span style={{ color: "red" }} data-testid="record-upload-coverURL-error">{errors.cover.message}</span>}
 
           <button className="btn-submit" type="submit" disabled={isSubmitting} data-testid="uploadRecord-button">
             {isSubmitting ? "Uploading..." : "Upload"}

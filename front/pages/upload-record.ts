@@ -10,6 +10,12 @@ export class UploadRecordPage {
     readonly coverURLUploadRecordInput: Locator;
     readonly uploadRecordButton: Locator;
 
+    readonly titleError: Locator;
+    readonly artistError: Locator;
+    readonly yearError: Locator;
+    readonly genreError: Locator;
+    readonly coverError: Locator;
+
     constructor(page: Page) {
         this.page = page;
 
@@ -19,12 +25,24 @@ export class UploadRecordPage {
         this.genreUploadRecordInput = page.getByTestId('genre-uploadRecord-input');
         this.coverURLUploadRecordInput = page.getByTestId('coverURL-uploadRecord-input');
         this.uploadRecordButton = page.getByTestId('uploadRecord-button');
+
+        this.titleError = page.getByTestId('record-upload-title-error');
+        this.artistError = page.getByTestId('record-upload-artist-error');
+        this.yearError = page.getByTestId('record-upload-year-error');
+        this.genreError = page.getByTestId('record-upload-genre-error');
+        this.coverError = page.getByTestId('record-upload-coverURL-error');
     }
 
-    async uploadRecord(title: string, artist: string, year: number, genre: string, coverURL: string) {
+    async uploadRecord(title: string, artist: string, year: number | null, genre: string, coverURL: string) {
         await this.titleUploadRecordInput.fill(title);
         await this.artistUploadRecordInput.fill(artist);
-        await this.yearUploadRecordInput.fill(year.toString());
+
+        if (year === null) {
+            await this.yearUploadRecordInput.fill('');
+        } else {
+            await this.yearUploadRecordInput.fill(year.toString());
+        }
+
         await this.genreUploadRecordInput.fill(genre);
         await this.coverURLUploadRecordInput.fill(coverURL);
 
@@ -33,5 +51,18 @@ export class UploadRecordPage {
 
     async verifySuccessfulUpload() {
         await expect(this.page).toHaveURL('/');
+    }
+
+    async verifyValidationError(field: 'title' | 'artist' | 'year' | 'genre' | 'cover', message: string) {
+        const map = {
+            title: this.titleError,
+            artist: this.artistError,
+            year: this.yearError,
+            genre: this.genreError,
+            cover: this.coverError
+        };
+
+        await expect(map[field]).toHaveText(message);
+        await expect(this.page).toHaveURL('/uploadRecord');
     }
 }
