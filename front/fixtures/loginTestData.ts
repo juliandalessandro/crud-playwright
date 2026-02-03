@@ -25,6 +25,16 @@ export const invalidUser: User[] = [
     }
 ]
 
+export const nonExistentUser: User[] = [
+    {
+        username: 'user0',
+        email: "user0@gmail.com",
+        password: 'user0pwd',
+        description: 'Non-existent User',
+        
+    }
+]
+
 export const LOGIN_MESSAGES = {
     
     LOGIN_SUCCESS: 'Login successful ✅',
