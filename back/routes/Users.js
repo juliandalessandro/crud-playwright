@@ -11,7 +11,7 @@ const { Op } = require("sequelize");
 const JWT_SECRET = "ACCESS_SECRET";
 const JWT_REFRESH_SECRET = "REFRESH_SECRET";
 
-// ✅ REGISTER (sin Zod)
+// REGISTER (sin Zod)
 router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -47,7 +47,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// ✅ LOGIN
+// LOGIN
 router.post("/login", async (req, res) => {
   const { identifier, password } = req.body;
 

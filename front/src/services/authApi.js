@@ -10,7 +10,7 @@ function getCookie(name) {
 export async function loginUser(identifier, password) {
   const res = await fetch("http://localhost:3001/auth/login", {
     method: "POST",
-    credentials: "include",   // ✅ OBLIGATORIO
+    credentials: "include",   // OBLIGATORIO
     headers: {
       "Content-Type": "application/json"
     },
@@ -24,7 +24,7 @@ export async function loginUser(identifier, password) {
 export async function registerUser(email, password, username) {
   const response = await fetch(`${BASE_URL}/register`, {
     method: "POST",
-    credentials: "include",   // ✅ OBLIGATORIO
+    credentials: "include",   // OBLIGATORIO
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password, username }),
   });
@@ -44,7 +44,7 @@ export async function logoutUser() {
     method: "POST",
     credentials: "include",
     headers: {
-      "x-csrf-token": csrfToken, // ✅ necesario ahora
+      "x-csrf-token": csrfToken, // necesario ahora
     },
   });
 
