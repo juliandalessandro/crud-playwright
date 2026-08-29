@@ -20,7 +20,7 @@ test.describe('Upload Record Flows', () => {
             record.artist,
             record.year,
             record.genre,
-            record.coverURL
+            record.cover
         );
 
         await uploadRecordPage.verifySuccessfulUpload();
@@ -35,7 +35,7 @@ test.describe('Upload Record Flows', () => {
                 data.artist || '',
                 data.year ?? null,
                 data.genre || '',
-                data.coverURL || ''
+                data.cover || ''
             );
 
             await uploadRecordPage.verifyValidationError(

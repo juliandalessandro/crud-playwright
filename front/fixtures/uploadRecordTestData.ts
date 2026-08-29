@@ -3,7 +3,7 @@ export interface Record {
     artist: string;
     year: number | null;
     genre: string;
-    coverURL: string;
+    cover: string;
     description: string;
 }
 
@@ -13,7 +13,7 @@ export const validRecord: Record[] = [
         artist: 'Oscar Peterson',
         year: 1959,
         genre: 'Jazz',
-        coverURL: 'https://lh3.googleusercontent.com/p1RfwuXvm7JCcN17exJvvug2uTVmll4PE23zp2KSqrny800hWDmIYX_J6ZuOQS2m3Fvh6_7MRRcARcYt=w544-h544-l90-rj',
+        cover: 'https://lh3.googleusercontent.com/p1RfwuXvm7JCcN17exJvvug2uTVmll4PE23zp2KSqrny800hWDmIYX_J6ZuOQS2m3Fvh6_7MRRcARcYt=w544-h544-l90-rj',
         description: 'Valid Record for Successful Upload'
     }
 ]
@@ -33,10 +33,10 @@ export const recordUploadErrorCases: RecordUploadErrorCases[] = [
             artist: 'Oscar Peterson',
             year: 1959,
             genre: 'Jazz',
-            coverURL: 'https://lh3.googleusercontent.com/p1RfwuXvm7JCcN17exJvvug2uTVmll4PE23zp2KSqrny800hWDmIYX_J6ZuOQS2m3Fvh6_7MRRcARcYt=w544-h544-l90-rj'
+            cover: 'https://lh3.googleusercontent.com/p1RfwuXvm7JCcN17exJvvug2uTVmll4PE23zp2KSqrny800hWDmIYX_J6ZuOQS2m3Fvh6_7MRRcARcYt=w544-h544-l90-rj'
         },
         field: 'title',
-        expectedError: 'Title is required'
+        expectedError: 'Title cannot be empty'
     },
     {
         testName: 'Record Upload Error - No Artist',
@@ -45,10 +45,10 @@ export const recordUploadErrorCases: RecordUploadErrorCases[] = [
             artist: '',
             year: 1959,
             genre: 'Jazz',
-            coverURL: 'https://lh3.googleusercontent.com/p1RfwuXvm7JCcN17exJvvug2uTVmll4PE23zp2KSqrny800hWDmIYX_J6ZuOQS2m3Fvh6_7MRRcARcYt=w544-h544-l90-rj'
+            cover: 'https://lh3.googleusercontent.com/p1RfwuXvm7JCcN17exJvvug2uTVmll4PE23zp2KSqrny800hWDmIYX_J6ZuOQS2m3Fvh6_7MRRcARcYt=w544-h544-l90-rj'
         },
         field: 'artist',
-        expectedError: 'Artist is required'
+        expectedError: 'Artist cannot be empty'
     },
     {
         testName: 'Record Upload Error - No Year',
@@ -57,22 +57,22 @@ export const recordUploadErrorCases: RecordUploadErrorCases[] = [
             artist: 'Oscar Peterson',
             year: null,
             genre: 'Jazz',
-            coverURL: 'https://lh3.googleusercontent.com/p1RfwuXvm7JCcN17exJvvug2uTVmll4PE23zp2KSqrny800hWDmIYX_J6ZuOQS2m3Fvh6_7MRRcARcYt=w544-h544-l90-rj'
+            cover: 'https://lh3.googleusercontent.com/p1RfwuXvm7JCcN17exJvvug2uTVmll4PE23zp2KSqrny800hWDmIYX_J6ZuOQS2m3Fvh6_7MRRcARcYt=w544-h544-l90-rj'
         },
         field: 'year',
-        expectedError: 'Year is required'
+        expectedError: 'Year cannot be null'
     },
     {
-        testName: 'Record Upload Error - Year before 1900',
+        testName: 'Record Upload Error - Year before 1600',
         data: {
             title: 'Plays The Jerome Kern Song Book',
             artist: 'Oscar Peterson',
-            year: 1899,
+            year: 1599,
             genre: 'Jazz',
-            coverURL: 'https://lh3.googleusercontent.com/p1RfwuXvm7JCcN17exJvvug2uTVmll4PE23zp2KSqrny800hWDmIYX_J6ZuOQS2m3Fvh6_7MRRcARcYt=w544-h544-l90-rj'
+            cover: 'https://lh3.googleusercontent.com/p1RfwuXvm7JCcN17exJvvug2uTVmll4PE23zp2KSqrny800hWDmIYX_J6ZuOQS2m3Fvh6_7MRRcARcYt=w544-h544-l90-rj'
         },
         field: 'year',
-        expectedError: 'Year must be 1900 or later'
+        expectedError: 'Year must be greater than or equal to 1600'
     },
     {
         testName: 'Record Upload Error - Year in the future',
@@ -81,10 +81,10 @@ export const recordUploadErrorCases: RecordUploadErrorCases[] = [
             artist: 'Oscar Peterson',
             year: new Date().getFullYear() + 1,
             genre: 'Jazz',
-            coverURL: 'https://lh3.googleusercontent.com/p1RfwuXvm7JCcN17exJvvug2uTVmll4PE23zp2KSqrny800hWDmIYX_J6ZuOQS2m3Fvh6_7MRRcARcYt=w544-h544-l90-rj'
+            cover: 'https://lh3.googleusercontent.com/p1RfwuXvm7JCcN17exJvvug2uTVmll4PE23zp2KSqrny800hWDmIYX_J6ZuOQS2m3Fvh6_7MRRcARcYt=w544-h544-l90-rj'
         },
         field: 'year',
-        expectedError: `Year cannot be later than ${new Date().getFullYear()}`
+        expectedError: `Year cannot be in the future`
     },
     {
         testName: 'Record Upload Error - No Genre',
@@ -93,10 +93,10 @@ export const recordUploadErrorCases: RecordUploadErrorCases[] = [
             artist: 'Oscar Peterson',
             year: 1959,
             genre: '',
-            coverURL: 'https://lh3.googleusercontent.com/p1RfwuXvm7JCcN17exJvvug2uTVmll4PE23zp2KSqrny800hWDmIYX_J6ZuOQS2m3Fvh6_7MRRcARcYt=w544-h544-l90-rj'
+            cover: 'https://lh3.googleusercontent.com/p1RfwuXvm7JCcN17exJvvug2uTVmll4PE23zp2KSqrny800hWDmIYX_J6ZuOQS2m3Fvh6_7MRRcARcYt=w544-h544-l90-rj'
         },
         field: 'genre',
-        expectedError: 'Genre is required'
+        expectedError: 'Genre cannot be empty'
     },
     {
         testName: 'Record Upload Error - No Cover URL',
@@ -105,10 +105,10 @@ export const recordUploadErrorCases: RecordUploadErrorCases[] = [
             artist: 'Oscar Peterson',
             year: 1959,
             genre: 'Jazz',
-            coverURL: ''
+            cover: ''
         },
         field: 'cover',
-        expectedError: 'Cover must be a valid URL'
+        expectedError: 'Cover cannot be empty'
     },
     {
         testName: 'Record Upload Error - No valid Cover URL',
@@ -117,7 +117,7 @@ export const recordUploadErrorCases: RecordUploadErrorCases[] = [
             artist: 'Oscar Peterson',
             year: 1959,
             genre: 'Jazz',
-            coverURL: 'not-a-valid-url'
+            cover: 'not-a-valid-url'
         },
         field: 'cover',
         expectedError: 'Cover must be a valid URL'
