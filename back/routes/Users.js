@@ -8,8 +8,8 @@ const auth = require("../middleware/auth");
 const csrf = require("../middleware/csrf");
 const { Op } = require("sequelize");
 
-const JWT_SECRET = "ACCESS_SECRET";
-const JWT_REFRESH_SECRET = "REFRESH_SECRET";
+const JWT_SECRET = process.env.ACCESS_SECRET;
+const JWT_REFRESH_SECRET = process.env.REFRESH_SECRET;
 
 // REGISTER (sin Zod)
 router.post("/register", async (req, res) => {
@@ -130,7 +130,7 @@ router.post("/refresh", (req, res) => {
 });
 
 router.get("/me", auth, (req, res) => {
-  res.json({ user: req.user });
+  return res.json({ user: req.user });
 });
 
 router.post("/logout", auth, csrf, (req, res) => {
