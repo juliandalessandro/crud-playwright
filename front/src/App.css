@@ -1,3 +1,69 @@
+/* ========= COLOR PALETTE (CSS VARIABLES) ========= */
+:root {
+  /* Backgrounds */
+  --color-bg-dark: #222;
+  --color-bg-darker: #2b2b2b;
+  --color-bg-input: #333;
+  --color-bg-hover-dark: #444;
+  --color-bg-dropdown-hover: #3b3b3b;
+
+  /* Text */
+  --color-text-light: #fff;
+  --color-text-light-soft: #f2f2f2;
+  --color-text-dark: #111;
+  --color-text-body: #222;
+  --color-text-muted: #666;
+  --color-text-secondary: #444;
+  --color-text-tertiary: #555;
+
+  /* Brand / primary */
+  --color-primary: #007bff;
+  --color-primary-hover: rgba(0, 123, 255, 0.8);
+
+  /* Danger / destructive */
+  --color-danger: #ff4f4f;
+  --color-danger-hover: #e04242;
+  --color-danger-soft: #ff6961;
+  --color-danger-soft-hover: #ff8680;
+  --color-delete: #c75b5b;
+  --color-delete-hover: #b44949;
+  --color-delete-overlay: rgba(225, 80, 80, 0.85);
+
+  /* Success */
+  --color-success: #9ccc65;
+
+  /* Error / warning states */
+  --color-error-text: #d9534f;
+  --color-error-bg: #ffe6e6;
+  --color-error-border: #c44;
+
+  /* Neutral buttons */
+  --color-btn-bg: #e0e0e0;
+  --color-btn-hover: #d1d1d1;
+  --color-btn-disabled: #aaa;
+
+  /* Borders / dividers */
+  --color-border: #444;
+  --color-border-soft: #3b3b3b;
+
+  /* Links */
+  --color-link: #3498db;
+
+  /* Card / surface */
+  --color-surface: #fff;
+  --color-surface-muted: #eee;
+
+  /* Overlays */
+  --color-overlay: rgba(0, 0, 0, 0.45);
+  --color-icon-overlay: rgba(0, 0, 0, 0.25);
+
+  /* Shadows (as variables so they're reusable too) */
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.35);
+  --shadow-modal: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
 /* GLOBAL SETTINGS */
 *,
 *::before,
@@ -15,11 +81,11 @@ body.modal-open {
 
 /* ========= NAVBAR ========= */
 .navbar-nav {
-  background-color: #222;
+  background-color: var(--color-bg-dark);
   padding: 0.75rem 1rem;
   display: flex;
   justify-content: center;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow-sm);
 }
 
 .navbar-ul {
@@ -37,7 +103,7 @@ body.modal-open {
 }
 
 .navbar-link {
-  color: #fff;
+  color: var(--color-text-light);
   text-decoration: none;
   font-weight: 600;
   padding: 0.5rem 1rem;
@@ -46,14 +112,14 @@ body.modal-open {
 }
 
 .navbar-link:hover {
-  background-color: #444;
+  background-color: var(--color-bg-hover-dark);
   transform: translateY(-2px);
 }
 
 .logout-btn {
-  background-color: #ff4f4f;
+  background-color: var(--color-danger);
   border: none;
-  color: white;
+  color: var(--color-text-light);
   padding: 8px 12px;
   cursor: pointer;
   border-radius: 6px;
@@ -62,10 +128,10 @@ body.modal-open {
 }
 
 .logout-btn:hover {
-  background-color: #e04242;
+  background-color: var(--color-danger-hover);
 }
 
-/* ========= MENU DROPDOWN (PROFESSIONAL STYLE) ========= */
+/* ========= MENU DROPDOWN ========= */
 .menu-container {
   position: relative;
 }
@@ -90,20 +156,9 @@ body.modal-open {
 .bar {
   height: 3px;
   width: 100%;
-  background-color: #fff;
+  background-color: var(--color-text-light);
   border-radius: 8px;
   transition: all 0.3s ease;
-}
-
-/* Animación del icono hamburguesa -> X */
-.menu-toggle.active .bar:nth-child(1) {
-  transform: translateY(9px) rotate(45deg);
-}
-.menu-toggle.active .bar:nth-child(2) {
-  opacity: 0;
-}
-.menu-toggle.active .bar:nth-child(3) {
-  transform: translateY(-9px) rotate(-45deg);
 }
 
 /* Dropdown */
@@ -111,18 +166,18 @@ body.modal-open {
   position: absolute;
   top: 42px;
   right: 0;
-  background: #2b2b2b;
+  background: var(--color-bg-darker);
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
   min-width: 160px;
   z-index: 100;
   animation: dropdownFadeIn 0.25s ease-out forwards;
-  border: 1px solid #3b3b3b;
+  border: 1px solid var(--color-border-soft);
 }
 
 .user-id-label {
-  color: white;
+  color: var(--color-text-light);
   margin-right: 12px;
   font-size: 0.85rem;
   opacity: 0.9;
@@ -134,7 +189,7 @@ body.modal-open {
   padding: 11px 18px;
   background: transparent;
   border: none;
-  color: #f2f2f2;
+  color: var(--color-text-light-soft);
   font-size: 0.95rem;
   text-align: left;
   cursor: pointer;
@@ -142,25 +197,25 @@ body.modal-open {
 }
 
 .dropdown-option:hover {
-  background-color: #3b3b3b;
-  color: #fff;
+  background-color: var(--color-bg-dropdown-hover);
+  color: var(--color-text-light);
 }
 
 .dropdown-divider {
   border: none;
-  border-top: 1px solid #444;
+  border-top: 1px solid var(--color-border);
   margin: 4px 0;
   opacity: 0.6;
 }
 
 .logout-option {
-  color: #ff6961;
+  color: var(--color-danger-soft);
   font-weight: 600;
 }
 
 .logout-option:hover {
-  background-color: #3b3b3b;
-  color: #ff8680;
+  background-color: var(--color-bg-dropdown-hover);
+  color: var(--color-danger-soft-hover);
 }
 
 @keyframes dropdownFadeIn {
@@ -174,17 +229,22 @@ body.modal-open {
   }
 }
 
-
 /* ========= SPINNER ========= */
 
 .spinner {
-  width: 20px; height: 20px;
-  border: 3px solid rgba(0,0,0,0.08);
-  border-top-color: var(--primary);
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(0, 0, 0, 0.08);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
-  animation: spin .8s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 /* ========= RECORD CARDS ========= */
 .records-container {
@@ -201,10 +261,10 @@ body.modal-open {
 }
 
 .record-card {
-  background: #fff;
+  background: var(--color-surface);
   padding: 15px;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-md);
   transition: transform 0.2s ease-in-out;
   position: relative;
 }
@@ -224,28 +284,28 @@ body.modal-open {
   margin-top: 10px;
   font-weight: bold;
   font-size: 1.2rem;
-  color: #222;
+  color: var(--color-text-body);
 }
 
 .record-title span {
   font-size: 1rem;
   font-weight: normal;
-  color: #666;
+  color: var(--color-text-muted);
 }
 
 .record-artist {
   font-style: italic;
   margin: 5px 0;
-  color: #444;
+  color: var(--color-text-secondary);
 }
 
 .record-genre {
-  background: #eee;
+  background: var(--color-surface-muted);
   padding: 5px;
   border-radius: 5px;
   display: inline-block;
   font-size: 0.85rem;
-  color: #555;
+  color: var(--color-text-tertiary);
 }
 
 /* Buttons */
@@ -275,34 +335,34 @@ body.modal-open {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.25);
+  color: var(--color-text-light);
+  background-color: var(--color-icon-overlay);
   backdrop-filter: blur(4px);
   transition: background-color 0.25s ease, transform 0.2s ease;
   font-size: 1.1rem;
 }
 
 .btn-edit:hover {
-  background-color: rgba(0, 123, 255, 0.8);
+  background-color: var(--color-primary-hover);
   transform: scale(1.12);
 }
 
 .btn-delete:hover {
-  background-color: rgba(225, 80, 80, 0.85);
+  background-color: var(--color-delete-overlay);
   transform: scale(1.12);
 }
 
 /* ========= LOADING & ERROR STATES ========= */
 
 .error-message {
-  color: #d9534f;
-  background: #ffe6e6;
+  color: var(--color-error-text);
+  background: var(--color-error-bg);
   padding: 10px;
   border-radius: 8px;
   font-size: 0.9rem;
   margin: 12px 0;
   font-weight: 600;
-  border: 1px solid #c44;
+  border: 1px solid var(--color-error-border);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -312,12 +372,6 @@ body.modal-open {
   content: "⚠️";
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 /* overlay loading para la grilla */
 .loading-overlay {
   display: flex;
@@ -325,7 +379,7 @@ body.modal-open {
   align-items: center;
   padding: 40px;
   font-size: 1.1rem;
-  color: #333;
+  color: var(--color-text-body);
   font-weight: 600;
   gap: 10px;
 }
@@ -344,8 +398,8 @@ body.modal-open {
 /* botón Retry */
 .btn-retry {
   padding: 1rem;
-  background-color: #e0e0e0;
-  color: #111;
+  background-color: var(--color-btn-bg);
+  color: var(--color-text-dark);
   border: none;
   border-radius: 12px;
   font-size: 1rem;
@@ -355,7 +409,7 @@ body.modal-open {
 }
 
 .btn-retry:hover {
-  background-color: #d1d1d1;
+  background-color: var(--color-btn-hover);
   transform: translateY(-2px);
 }
 
@@ -370,7 +424,7 @@ body.modal-open {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: var(--color-overlay);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -381,18 +435,18 @@ body.modal-open {
 }
 
 .modal-overlay.closing {
-  animation: fadeOut 0.25s forwards;
+  animation: modalFadeOut 0.25s forwards;
 }
 
 .modal-content {
-  background: #fff;
+  background: var(--color-surface);
   padding: 24px 22px;
   border-radius: 16px;
   width: 100%;
   max-width: 450px;
   text-align: center;
   position: relative;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  box-shadow: var(--shadow-modal);
   animation: popIn 0.25s ease-out forwards;
 }
 
@@ -430,26 +484,26 @@ body.modal-open {
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  font-size: .9rem;
+  font-size: 0.9rem;
   transition: background 0.2s;
 }
 
 .btn-cancel {
-  background: #e0e0e0;
+  background: var(--color-btn-bg);
   margin-right: 8px;
 }
 
 .btn-cancel:hover {
-  background: #ccc;
+  background: var(--color-btn-hover);
 }
 
 .btn-confirm-delete {
-  background: #c75b5b;
-  color: white;
+  background: var(--color-delete);
+  color: var(--color-text-light);
 }
 
 .btn-confirm-delete:hover {
-  background: #b44949;
+  background: var(--color-delete-hover);
 }
 
 /* Modal Animations */
@@ -458,7 +512,7 @@ body.modal-open {
   to   { opacity: 1; }
 }
 
-@keyframes fadeOut {
+@keyframes modalFadeOut {
   from { opacity: 1; }
   to   { opacity: 0; }
 }
@@ -466,7 +520,7 @@ body.modal-open {
 @keyframes popIn {
   from {
     opacity: 0;
-    transform: scale(.92) translateY(4px);
+    transform: scale(0.92) translateY(4px);
   }
   to {
     opacity: 1;
@@ -479,15 +533,15 @@ body.modal-open {
   position: fixed;
   bottom: 30px;
   right: 30px;
-  background: #b44949;
-  color: white;
+  background: var(--color-delete-hover);
+  color: var(--color-text-light);
   padding: 12px 18px;
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.95rem;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-lg);
   opacity: 0;
-  animation: slideIn 0.4s forwards, fadeOut 0.4s 2s forwards;
+  animation: slideIn 0.4s forwards, toastFadeOut 0.4s 2s forwards;
   z-index: 9999;
 }
 
@@ -495,15 +549,15 @@ body.modal-open {
   position: fixed;
   bottom: 30px;
   right: 30px;
-  background: rgba(0, 123, 255, 0.8);
-  color: white;
+  background: var(--color-primary-hover);
+  color: var(--color-text-light);
   padding: 12px 18px;
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.95rem;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-lg);
   opacity: 0;
-  animation: slideIn 0.4s forwards, fadeOut 0.4s 2s forwards;
+  animation: slideIn 0.4s forwards, toastFadeOut 0.4s 2s forwards;
   z-index: 9999;
 }
 
@@ -518,7 +572,7 @@ body.modal-open {
   }
 }
 
-@keyframes fadeOut {
+@keyframes toastFadeOut {
   to {
     opacity: 0;
     transform: translateY(20px);
@@ -530,11 +584,11 @@ body.modal-open {
   width: 90%;
   max-width: 450px;
   margin: 2rem auto;
-  background-color: #222;
-  color: #fff;
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-light);
   padding: 2rem;
   border-radius: 16px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
   text-align: center;
 }
 
@@ -554,9 +608,9 @@ body.modal-open {
   width: 100%;
   padding: 1rem;
   border-radius: 12px;
-  border: 1px solid #444;
-  background-color: #333;
-  color: white;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-input);
+  color: var(--color-text-light);
   font-size: 1rem;
   transition: border 0.2s ease;
   outline: none;
@@ -568,10 +622,10 @@ body.modal-open {
 
 .btn-submit {
   padding: 1.1rem;
-  background-color: #e0e0e0;
+  background-color: var(--color-btn-bg);
   border: none;
   border-radius: 12px;
-  color: #111;
+  color: var(--color-text-dark);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -579,18 +633,18 @@ body.modal-open {
 }
 
 .btn-submit:hover {
-  background-color: #d1d1d1;
+  background-color: var(--color-btn-hover);
   transform: translateY(-2px);
 }
 
 .btn-submit:disabled {
-  background-color: #aaa;
+  background-color: var(--color-btn-disabled);
   cursor: not-allowed;
   transform: none;
 }
 
 .link-underline {
-  color: #3498db;
+  color: var(--color-link);
   text-decoration: none;
   font-weight: 600;
   border-bottom: 2px solid transparent;
@@ -598,12 +652,12 @@ body.modal-open {
 }
 
 .link-underline:hover {
-  border-bottom: 2px solid #3498db;
+  border-bottom: 2px solid var(--color-link);
 }
 
 .message-success {
   margin-top: 1rem;
-  color: #9ccc65;
+  color: var(--color-success);
   font-weight: 500;
 }
 
@@ -612,9 +666,9 @@ body.modal-open {
   align-items: center;
   gap: 8px;
   padding: 12px 16px;
-  background-color: #ffe6e6;
-  color: #c75b5b;
-  border: 1px solid #c44;
+  background-color: var(--color-error-bg);
+  color: var(--color-delete);
+  border: 1px solid var(--color-error-border);
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.95rem;
