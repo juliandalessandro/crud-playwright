@@ -6,16 +6,20 @@ const csrf = require("../middleware/csrf");
 
 router.get("/", auth, async (req, res) => {
     const listOfRecords = await records.findAll();
-    res.json(listOfRecords);
+    return res.json(listOfRecords);
 });
 
 router.post('/', auth, csrf, async (req, res) => {
   try {
     const record = await records.create(req.body);
-    res.status(201).json(record);
+    return res.status(201).json(record);
   } catch (error) {
+    if (error.name === 'SequelizeValidationError') {
+      const validationErrors = error.errors.map(err => err.message);
+      return res.status(400).json({ errors: validationErrors });
+    }
     console.error(error);
-    res.status(500).send("Server error");
+    return res.status(500).send("Server error");
   }
 });
 
@@ -23,9 +27,9 @@ router.put("/:id", auth, csrf, async (req, res) => {
   try {
     const { id } = req.params;
     await records.update(req.body, { where: { id } });
-    res.json({ message: "Record updated successfully" });
+    return res.json({ message: "Record updated successfully" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 });
 
@@ -36,13 +40,13 @@ router.delete("/:id", auth, csrf, async (req, res) => {
     const result = await records.destroy({ where: { id }});
 
     if(result) {
-      res.status(200).send(`Task with id ${id} deleted.`);
+      return res.status(200).send(`Task with id ${id} deleted.`);
     } else {
-      res.status(404).send(`Task with id ${id} could not be deleted`);
+      return res.status(404).send(`Task with id ${id} could not be deleted`);
     }
-  } catch {
+  } catch (error) {
     console.error(error);
-    res.status(500).send("Server error");
+    return res.status(500).send("Server error");
   }
 });
 
