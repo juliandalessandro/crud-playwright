@@ -16,9 +16,24 @@ test.describe('Login Flows', () => {
         await loginPage.verifySuccessfulLogin();
     });
 
+    test('Successful Login with username in uppercase', async ({ page }) => {
+        await loginPage.login(validUser[0].username.toUpperCase(), validUser[0].password);
+        await loginPage.verifySuccessfulLogin();
+    });
+
     test('Successful Login with email', async ({ page }) => {
         await loginPage.login(validUser[0].email, validUser[0].password);
         await loginPage.verifySuccessfulLogin();
+    });
+
+    test('Successful Login with email in uppercase', async ({ page }) => {
+        await loginPage.login(validUser[0].email.toUpperCase(), validUser[0].password);
+        await loginPage.verifySuccessfulLogin();
+    });
+
+    test('Login with password in uppercase', async ({ page }) => {
+        await loginPage.login(validUser[0].username, validUser[0].password.toUpperCase());
+        await loginPage.verifyInvalidCredentialsLogin();
     });
 
     test('Login with invalid credentials using username', async ({ page }) => {

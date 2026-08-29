@@ -8,8 +8,8 @@ import "../App.css";
 import Navbar from "../components/Navbar";
 
 const recordSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  artist: z.string().min(1, "Artist is required"),
+  title: z.string().min(1, "Title cannot be empty"),
+  artist: z.string().min(1, "Artist cannot be empty"),
   year: z
     .union([
       z.number({
@@ -18,19 +18,28 @@ const recordSchema = z.object({
       z.nan()
     ])
     .refine((val) => val !== undefined && !Number.isNaN(val), {
-      message: "Year is required",
+      message: "Year cannot be null",
     })
     .refine((val) => Number.isInteger(val), {
       message: "Year must be an integer",
     })
-    .refine((val) => val >= 1900, {
-      message: "Year must be 1900 or later",
+    .refine((val) => val >= 1600, {
+      message: "Year must be greater than or equal to 1600",
     })
     .refine((val) => val <= new Date().getFullYear(), {
-      message: `Year cannot be later than ${new Date().getFullYear()}`,
+      message: `Year cannot be in the future`,
     }),
-  genre: z.string().min(1, "Genre is required"),
-  cover: z.string().url("Cover must be a valid URL"),
+  genre: z.string().min(1, "Genre cannot be empty"),
+  cover: z.string().min(1, "Cover cannot be empty")
+  .refine((val) => {
+    try {
+      new URL(val);
+      return true;
+    } catch {
+      return false;
+    }},{
+      message: "Cover must be a valid URL",
+    })
 });
 
 export default function UploadRecord() {
