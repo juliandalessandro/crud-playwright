@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { UploadRecordPage } from '../../pages/upload-record';
+import { UploadRecordPage } from '../../pages/UploadRecordPage';
 import { validRecord, recordUploadErrorCases } from "../../fixtures/uploadRecordTestData";
 
 test.describe('Upload Record Flows', () => {

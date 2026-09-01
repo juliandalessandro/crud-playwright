@@ -1,5 +1,5 @@
 // REACT imports
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 // API service
@@ -42,32 +42,49 @@ function ListOfRecords() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [recordToDelete, setRecordToDelete] = useState(null);
 
-  /* ------------------ FETCH records ------------------ */
-  useEffect(() => {
-    let mounted = true;
-
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const data = await getRecords();
-        if (mounted) setListOfRecords(data || []);
-      } catch (err) {
-        console.error("Error fetching records:", err);
-        if (mounted) setError("Failed to load records. Please try again.");
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-
-    fetchData();
-    return () => {
-      mounted = false;
-    };
+  /* ------------------ 1. FUNCTIONS DEFINITIONS FIRST ------------------ */
+  
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getRecords();
+      setListOfRecords(data || []);
+    } catch (err) {
+      console.error("Error fetching records:", err);
+      setError("Failed to load records. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  /* ------------------ HANDLE UPLOAD TOAST ------------------ */
+  const handleCloseDelete = useCallback(() => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setShowDeleteModal(false);
+      setIsClosing(false);
+      setRecordToDelete(null);
+    }, 200);
+  }, []);
+
+  const handleCloseEdit = useCallback(() => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setShowEditModal(false);
+      setIsClosing(false);
+      document.body.classList.remove("modal-open");
+      setRecordToEdit(null);
+    }, 200);
+  }, []);
+
+  /* ------------------ 2. EFFECTS AND HOOKS ------------------ */
+
+  // Calls fetchData when mounting component
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  /* HANDLE UPLOAD TOAST */
   useEffect(() => {
     if (location.state?.toastMessage) {
       showToast(location.state.toastMessage, "success");
@@ -77,7 +94,7 @@ function ListOfRecords() {
     }
   }, [location.state, showToast]);
 
-  /* ------------------ SEARCH ------------------ */
+  /* SEARCH */
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(search), 400);
     return () => clearTimeout(timer);
@@ -91,27 +108,23 @@ function ListOfRecords() {
     );
   }, [listOfRecords, debouncedSearch]);
 
-  /* ------------------ KEYBOARD ESC ------------------ */
+  /* KEYBOARD ESC */
   useEffect(() => {
-    const handleKey = (e) =>
-      e.key === "Escape" && (handleCloseDelete(), handleCloseEdit());
+    const handleKey = (e) => {
+      if (e.key !== "Escape") return;
+      if (showDeleteModal) handleCloseDelete();
+      if (showEditModal) handleCloseEdit();
+    };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, []);
+  }, [showDeleteModal, showEditModal, handleCloseDelete, handleCloseEdit]);
 
-  /* ------------------ DELETE ------------------ */
+  /* ------------------ 3. ACTIONS ------------------ */
+
+  /* DELETE */
   const handleDelete = (record) => {
     setRecordToDelete(record);
     setShowDeleteModal(true);
-  };
-
-  const handleCloseDelete = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setShowDeleteModal(false);
-      setIsClosing(false);
-      setRecordToDelete(null);
-    }, 200);
   };
 
   const handleConfirmDelete = async () => {
@@ -129,21 +142,11 @@ function ListOfRecords() {
     }
   };
 
-  /* ------------------ EDIT ------------------ */
+  /* EDIT */
   const handleEdit = (record) => {
     setRecordToEdit(record);
     setShowEditModal(true);
     document.body.classList.add("modal-open");
-  };
-
-  const handleCloseEdit = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setShowEditModal(false);
-      setIsClosing(false);
-      document.body.classList.remove("modal-open");
-      setRecordToEdit(null);
-    }, 200);
   };
 
   const handleSubmitEdit = async (id, data) => {
@@ -154,7 +157,7 @@ function ListOfRecords() {
       );
     } catch (err) {
       console.error("Error updating record:", err);
-      throw err; // para que el modal muestre toast de error
+      throw err;
     }
   };
 
@@ -176,7 +179,7 @@ function ListOfRecords() {
       <div className="records-container">
         <h2>List of Records</h2>
         <p className="error-message">{error}</p>
-        <button className="btn-retry" onClick={() => window.location.reload()}>
+        <button className="btn-retry" onClick={fetchData}>
           Retry
         </button>
       </div>
