@@ -3,7 +3,7 @@ import '../App.css';
 
 function RecordCard({ record, onEdit, onDelete }) {
   return (
-    <div className="record-card">
+    <div className="record-card" data-testid="record-recordsPage-card">
       <img
         src={record.cover}
         alt={record.title}
@@ -18,8 +18,8 @@ function RecordCard({ record, onEdit, onDelete }) {
       <p className="record-genre">{record.genre}</p>
 
       <div className="card-actions">
-        <button className="btn-edit" onClick={() => onEdit(record)}>✏️</button>
-        <button className="btn-delete" onClick={() => onDelete(record)}>🗑️</button>
+        <button className="btn-edit" data-testid="record-recordsPage-edit-button" onClick={() => onEdit(record)}>✏️</button>
+        <button className="btn-delete" data-testid="record-recordsPage-delete-button" onClick={() => onDelete(record)}>🗑️</button>
       </div>
     </div>
   );
