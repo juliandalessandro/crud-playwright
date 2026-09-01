@@ -17,20 +17,20 @@ function DeleteRecordModal({ show, isClosing, record, onCancel, onConfirm }) {
   };
 
   return (
-    <div className={`modal-overlay ${isClosing ? "closing" : ""}`} onClick={onCancel}>
+    <div className={`modal-overlay ${isClosing ? "closing" : ""}`} onClick={onCancel} data-testid="delete-record-modal">
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onCancel}>
+        <button className="modal-close" data-testid="x-delete-record" onClick={onCancel}>
           ×
         </button>
-        <h3>Are you sure you want to delete this record?</h3>
-        <p>
+        <h3 data-testid="delete-record-title">Are you sure you want to delete this record?</h3>
+        <p data-testid="record-info-deleteRecord">
           {record.title} – {record.artist}
         </p>
         <div className="modal-buttons">
-          <button className="btn-cancel" onClick={onCancel}>
+          <button className="btn-cancel" data-testid="cancel-delete-record" onClick={onCancel}>
             Cancel
           </button>
-          <button className="btn-confirm-delete" onClick={handleConfirm}>
+          <button className="btn-confirm-delete" data-testid="confirm-delete-record" onClick={handleConfirm}>
             Delete
           </button>
         </div>
