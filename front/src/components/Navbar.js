@@ -68,10 +68,10 @@ function Navbar() {
 
           {menuOpen && (
             <div className="menu-dropdown">
-              <button className="dropdown-option" onClick={() => handleNavigate("/profile")}>Profile</button>
-              <button className="dropdown-option" onClick={() => handleNavigate("/settings")}>Settings</button>
-              <button className="dropdown-option" onClick={() => handleNavigate("/my-records")}>My Records</button>
-              <hr className="dropdown-divider" />
+              {/* <button className="dropdown-option" onClick={() => handleNavigate("/profile")}>Profile</button> */}
+              {/* <button className="dropdown-option" onClick={() => handleNavigate("/settings")}>Settings</button> */}
+              {/* <button className="dropdown-option" onClick={() => handleNavigate("/my-records")}>My Records</button> */}
+              {/* <hr className="dropdown-divider" /> */}
               <button className="dropdown-option logout-option" onClick={handleLogout}>Logout</button>
             </div>
           )}
